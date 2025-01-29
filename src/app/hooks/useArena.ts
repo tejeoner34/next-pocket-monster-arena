@@ -3,12 +3,12 @@ import { Pokemon } from '../models/pokemon-model';
 import { usePokemon } from './usePokemon';
 
 interface ArenaData {
-  myPokemon: Pokemon;
-  rivalPokemon: Pokemon;
+  myPokemon: PokemonArena;
+  rivalPokemon: PokemonArena;
   isOver: boolean;
 }
 
-interface PokemonArena extends Pokemon {
+export interface PokemonArena extends Pokemon {
   currentHealth: number;
   currentPercentageHealth: string;
   isAlive: boolean;

@@ -10,15 +10,9 @@ export default function Arena() {
       <div className="relative overflow-hidden h-[540px] rounded bg-gradient-to-b from-[#242400] to-[#DDECE0] pt-4">
         {arenaData.myPokemon && arenaData.rivalPokemon && (
           <>
-            {/* <div className="flex flex-row-reverse justify-around">
-              {pokemonOpponent && (
-                <PokemonComponent
-                  className="arena__opponent-container"
-                  pokemon={pokemonOpponent}
-                  isOpponent={true}
-                />
-              )}
-            </div> */}
+            <div className="flex flex-row-reverse justify-around">
+              <PokemonInfo pokemon={arenaData.rivalPokemon} />
+            </div>
             <div className="flex justify-around items-center w-full">
               <PokemonInfo pokemon={arenaData.myPokemon} />
             </div>
