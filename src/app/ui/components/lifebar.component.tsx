@@ -13,7 +13,13 @@ const calculateLifeBarColor = (life: number) => {
   }
 };
 
-export default function Lifebar({ pokemon }: { pokemon: PokemonArena }) {
+export default function Lifebar({
+  pokemon,
+  showLifePoints = true,
+}: {
+  pokemon: PokemonArena;
+  showLifePoints?: boolean;
+}) {
   return (
     <div className="w-full min-h-[100px] max-w-[350px] bg-[#f5f6da] flex flex-col justify-evenly items-center border-[7px] border-gray-600 rounded-tl-[20px] rounded-tr-[5px] rounded-br-[20px] rounded-bl-[2px] z-10">
       <div className="text-center">
@@ -34,11 +40,13 @@ export default function Lifebar({ pokemon }: { pokemon: PokemonArena }) {
         </div>
       </div>
 
-      <div className="text-black">
-        <p>
-          {pokemon.currentHealth}/{pokemon.hp}
-        </p>
-      </div>
+      {showLifePoints && (
+        <div className="text-black">
+          <p>
+            {pokemon.currentHealth}/{pokemon.hp}
+          </p>
+        </div>
+      )}
     </div>
   );
 }

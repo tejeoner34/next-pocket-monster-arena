@@ -1,24 +1,24 @@
 'use client';
 import { useArena } from '@/app/hooks/useArena';
 import PokemonInfo from '@/app/ui/components/pokemon-info.component';
+import RivalPokemonInfo from '@/app/ui/components/rival-pokemon-info.component';
 
-export default function Arena() {
+export default function Page() {
   const { arenaData } = useArena();
 
   return (
-    <div className="max-w-[1000px] mx-auto p-4 flex flex-col justify-center gap-4 relative">
-      <div className="relative overflow-hidden h-[540px] rounded bg-gradient-to-b from-[#242400] to-[#DDECE0] pt-4">
-        {arenaData.myPokemon && arenaData.rivalPokemon && (
-          <>
-            <div className="flex flex-row-reverse justify-around">
-              <PokemonInfo pokemon={arenaData.rivalPokemon} />
-            </div>
-            <div className="flex justify-around items-center w-full">
-              <PokemonInfo pokemon={arenaData.myPokemon} />
-            </div>
-          </>
-        )}
-        {/* <div className="flex h-[140px] relative bottom-[46px] border-8 border-[#361e1e] z-[500]">
+    <div className="relative overflow-hidden h-[540px] rounded bg-gradient-to-b from-[#242400] to-[#DDECE0] pt-4">
+      {arenaData.myPokemon && arenaData.rivalPokemon && (
+        <>
+          <div className="flex flex-row-reverse justify-around">
+            <RivalPokemonInfo pokemon={arenaData.rivalPokemon} />
+          </div>
+          <div className="flex justify-around items-center w-full">
+            <PokemonInfo pokemon={arenaData.myPokemon} />
+          </div>
+        </>
+      )}
+      {/* <div className="flex h-[140px] relative bottom-[46px] border-8 border-[#361e1e] z-[500]">
           <div className="bg-[#334f70] text-white border-6 border-[#dbb46d] w-1/2 flex items-center justify-center p-4">
             <p
               className={`leading-[30px] ${boxMessage === 'criticalHit' ? 'text-yellow-500' : ''}`}
@@ -74,7 +74,6 @@ export default function Arena() {
             </div>
           ))}
         </div> */}
-      </div>
     </div>
   );
 }

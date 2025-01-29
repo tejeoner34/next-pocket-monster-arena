@@ -4,6 +4,7 @@ import '../globals.css';
 import { pokemon } from '../ui/fonts';
 import { ThemeContextProvider } from '../context/theme-context';
 import ReactQueryProvider from '../context/query-client';
+import Header from '../ui/components/header';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -28,8 +29,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${pokemon.className} ${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${pokemon.className} ${geistSans.variable} ${geistMono.variable} antialiased min-h-screen`}
       >
+        <Header />
         <ReactQueryProvider>
           <ThemeContextProvider>{children}</ThemeContextProvider>
         </ReactQueryProvider>

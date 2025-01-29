@@ -1,13 +1,11 @@
 import { getDictionary } from './dictionaries';
 import Link from 'next/link';
 import ThemeButtons from '../ui/components/theme-buttons';
-import Header from '../ui/components/header';
 
 export default async function Home({ params: { lang } }: { params: { lang: string } }) {
   const { home } = await getDictionary(lang);
   return (
-    <div className=" flex flex-col items-center justify-center min-h-screen">
-      <Header />
+    <div className=" flex flex-col items-center justify-center h-full">
       <div className="bg-foreground shadow-lg p-8 w-full max-w-2xl">
         <div className="flex flex-col justify-center items-center bg-backgroundSecondary">
           <div className="mb-6">
