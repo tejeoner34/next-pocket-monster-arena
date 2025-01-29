@@ -5,7 +5,7 @@
 @layer base {
   :root {
     --background: #ef4444;
-    --foreground: #171717;
+    --foreground: #fff;
     --background-secondary: #94caaf;
     --button-primary: #f44336;
     --button-secondary: #795548;
@@ -21,8 +21,8 @@
     --background-secondary: #547263;
     --button-primary: #2196f3;
     --button-secondary: #8bc34a;
-    --button-tertiary: #745c5c;
-    --button-quaternary: bisque;
+    --button-tertiary: #4e5558;
+    --button-quaternary: #562f00;
     --text-primary: #fff;
     --text-secondary: #000;
     --text-tertiary: #dae7f3;
