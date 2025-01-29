@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import { getDictionary } from './dictionaries';
 import Link from 'next/link';
+import ThemeButtons from '../ui/components/theme-buttons';
 
 export default async function Home({ params: { lang } }: { params: { lang: string } }) {
   const { home } = await getDictionary(lang);
@@ -43,17 +44,7 @@ export default async function Home({ params: { lang } }: { params: { lang: strin
             </div>
           </div>
 
-          <div className="mb-6">
-            <h2 className="text-lg font-medium mb-2 text-textTertiary">{home.chooseTheme}</h2>
-            <div className="flex space-x-4">
-              <button className="bg-buttonTertiary font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-                {home.dark}
-              </button>
-              <button className="bg-buttonQuaternary text-gray-800 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-                {home.light}
-              </button>
-            </div>
-          </div>
+          <ThemeButtons translations={home} />
 
           <div className="mb-6">
             <h2 className="text-lg font-medium mb-2 text-textTertiary">{home.playMultiplayer}</h2>
