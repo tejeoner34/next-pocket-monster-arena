@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from 'next/font/google';
 import '../globals.css';
 import { pokemon } from '../ui/fonts';
 import { ThemeContextProvider } from '../context/theme-context';
+import ReactQueryProvider from '../context/query-client';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -29,7 +30,9 @@ export default function RootLayout({
       <body
         className={`${pokemon.className} ${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <ThemeContextProvider>{children}</ThemeContextProvider>
+        <ReactQueryProvider>
+          <ThemeContextProvider>{children}</ThemeContextProvider>
+        </ReactQueryProvider>
       </body>
     </html>
   );

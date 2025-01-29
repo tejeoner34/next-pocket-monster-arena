@@ -1,4 +1,4 @@
-export interface Welcome {
+export interface Pokemon {
   abilities: Ability[];
   forms: Species[];
   id: number;
@@ -9,6 +9,7 @@ export interface Welcome {
   stats: Stat[];
   types: Type[];
   weight: number;
+  hp: number;
 }
 
 export interface Ability {
