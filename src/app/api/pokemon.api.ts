@@ -1,6 +1,6 @@
 import axios from 'axios';
-import { generateRandomNumber } from '../lib/utils';
-import { Pokemon } from '../models/pokemon-model';
+import { generateRandomNumber, getRandomElements } from '../lib/utils';
+import { Move, MoveDetail, Pokemon } from '../models/pokemon-model';
 
 const BASE_URL = 'https://pokeapi.co/api/v2/pokemon';
 
@@ -22,7 +22,8 @@ export const getXamountOfPokemon = async (amount: number): Promise<Pokemon[]> =>
     return await Promise.all(
       randomPokemonIds.map(async () => {
         const pokemon = await getRandomPokemon();
-        return pokemonAdapter(pokemon);
+        const moves = await get4MovesInfo(pokemon);
+        return pokemonAdapter(pokemon, moves);
       })
     );
   } catch (error) {
@@ -31,9 +32,32 @@ export const getXamountOfPokemon = async (amount: number): Promise<Pokemon[]> =>
   }
 };
 
-const pokemonAdapter = (pokemon: Pokemon) => {
+const pokemonAdapter = (pokemon: Pokemon, arenaMoves: MoveDetail[]) => {
   return {
     ...pokemon,
     hp: pokemon.stats.find((stat) => stat.stat.name === 'hp')?.base_stat ?? 0,
+    arenaMoves,
   };
+};
+
+const get4MovesInfo = async (pokemon: Pokemon): Promise<MoveDetail[]> => {
+  const chosenMoves = getRandomMovesFromMoveSet(pokemon.moves);
+  try {
+    const response = await Promise.all(
+      chosenMoves.map(async (move) => await axios.get(move.move.url))
+    );
+    console.log('get 4 moves info', response);
+    return response.map((move) => move.data);
+  } catch (error) {
+    console.log(error);
+    return [];
+  }
+};
+
+const getRandomMovesFromMoveSet = (moves: Move[]): Move[] => {
+  const movesAmount = moves.length;
+  if (movesAmount <= 4) {
+    return moves;
+  }
+  return getRandomElements(moves, 4);
 };

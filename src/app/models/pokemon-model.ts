@@ -10,6 +10,7 @@ export interface Pokemon {
   types: Type[];
   weight: number;
   hp: number;
+  arenaMoves: MoveDetail[];
 }
 
 export interface Ability {
@@ -48,4 +49,35 @@ export interface Stat {
 export interface Type {
   slot: number;
   type: Species;
+}
+
+export interface MoveDetail {
+  accuracy: number;
+  id: number;
+  meta: Meta;
+  name: string;
+  names: Name[];
+  power: number;
+  pp: number;
+  type: Type;
+}
+
+export interface Type {
+  name: string;
+  url: string;
+}
+
+export interface Meta {
+  crit_rate: number;
+  flinch_chance: number;
+}
+
+export interface Name {
+  language: Language;
+  name: string;
+}
+
+export interface Language {
+  name: string;
+  url: string;
 }
