@@ -13,6 +13,12 @@ export interface Pokemon {
   arenaMoves: MoveDetail[];
 }
 
+export interface ArenaPokemon extends Pokemon {
+  currentHealth: number;
+  currentPercentageHealth: string;
+  isAlive: boolean;
+}
+
 export interface Ability {
   ability: Species;
   is_hidden: boolean;

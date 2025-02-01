@@ -13,5 +13,5 @@ export const usePokemon = () => {
     refetchOnWindowFocus: false,
   });
 
-  return { pokemons };
+  return { pokemons, isLoading, isError };
 };

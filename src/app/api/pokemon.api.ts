@@ -32,7 +32,7 @@ export const getXamountOfPokemon = async (amount: number): Promise<Pokemon[]> =>
   }
 };
 
-const pokemonAdapter = (pokemon: Pokemon, arenaMoves: MoveDetail[]) => {
+const pokemonAdapter = (pokemon: Pokemon, arenaMoves: MoveDetail[]): Pokemon => {
   return {
     ...pokemon,
     hp: pokemon.stats.find((stat) => stat.stat.name === 'hp')?.base_stat ?? 0,

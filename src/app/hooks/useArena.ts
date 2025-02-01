@@ -1,21 +1,15 @@
 import { useEffect, useState } from 'react';
-import { Pokemon } from '../models/pokemon-model';
+import { Pokemon, ArenaPokemon } from '../models/pokemon-model';
 import { usePokemon } from './usePokemon';
 
 interface ArenaData {
-  myPokemon: PokemonArena;
-  rivalPokemon: PokemonArena;
+  myPokemon: ArenaPokemon;
+  rivalPokemon: ArenaPokemon;
   isOver: boolean;
 }
 
-export interface PokemonArena extends Pokemon {
-  currentHealth: number;
-  currentPercentageHealth: string;
-  isAlive: boolean;
-}
-
 export function useArena() {
-  const { pokemons } = usePokemon();
+  const { pokemons, isLoading } = usePokemon();
   const [arenaData, setArenaData] = useState<ArenaData>({} as ArenaData);
 
   useEffect(() => {
@@ -28,10 +22,10 @@ export function useArena() {
     }
   }, [pokemons]);
 
-  return { arenaData };
+  return { arenaData, isLoading };
 }
 
-const initiatePokemonForArena = (pokemon: Pokemon): PokemonArena => ({
+const initiatePokemonForArena = (pokemon: Pokemon): ArenaPokemon => ({
   ...pokemon,
   currentHealth: pokemon.hp,
   currentPercentageHealth: '100%',
