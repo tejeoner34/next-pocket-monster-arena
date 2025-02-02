@@ -1,12 +1,12 @@
 'use client';
 import { useArena } from '@/app/hooks/useArena';
+import InfoBox from '@/app/ui/components/info-box.component';
 import PokemonInfo from '@/app/ui/components/pokemon-info.component';
 import RivalPokemonInfo from '@/app/ui/components/rival-pokemon-info.component';
 import ScreenPokeballPlaceholder from '@/app/ui/components/screen-pokeball-placeholder';
 
 export default function Page() {
   const { arenaData, isLoading } = useArena();
-  const boxMessage = '';
 
   return (
     <>
@@ -21,33 +21,10 @@ export default function Page() {
             <div className="flex justify-around items-center w-full">
               <PokemonInfo pokemon={arenaData.myPokemon} />
             </div>
-            <div>
-              <div className="flex h-[140px] relative border-8 border-[#361e1e] z-[500]">
-                <div className="bg-[#334f70] text-white border-6 border-[#dbb46d] w-1/2 flex items-center justify-center p-4">
-                  <p
-                    className={`leading-[30px] ${
-                      boxMessage === 'criticalHit' ? 'text-yellow-500' : ''
-                    }`}
-                  >
-                    {boxMessage}
-                  </p>
-                </div>
-                <div className="relative w-1/2 border-7 border-[#6e4d8c] flex flex-wrap justify-center text-xs pl-4">
-                  {arenaData.myPokemon.arenaMoves.map((move, i) => (
-                    <div
-                      key={i}
-                      className="relative w-[45%] rounded-lg flex items-center cursor-pointer p-2 bg-blue-400 m-1"
-                      // onClick={() => chooseMove(move, i)}
-                    >
-                      <p className="text-white">{move.name}</p>
-                    </div>
-                  ))}
-                  {/* {hasSelectedMove && (
-              <div className="absolute w-full h-full bg-gray-200 opacity-50 left-0"></div>
-            )} */}
-                </div>
-              </div>
-            </div>
+            <InfoBox
+              boxMessage="this is a placeholder message"
+              moves={arenaData.myPokemon.arenaMoves}
+            />
             <div>
               <button
                 // onClick={() => setMovesContainerOpen(!movesContainerOpen)}
