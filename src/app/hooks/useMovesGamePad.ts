@@ -4,7 +4,7 @@ import { MoveDetail } from '../models/pokemon-model';
 const TOTAL_ROWS = 2;
 const TOTAL_COLS = 2;
 
-export function useMovesGamePad(moves: MoveDetail[]) {
+export function useMovesGamePad(moves: [MoveDetail, MoveDetail, MoveDetail, MoveDetail]) {
   const [movesMatrix] = useState<MoveDetail[][]>([
     [moves[0], moves[1]],
     [moves[2], moves[3]],
