@@ -5,10 +5,10 @@ const TOTAL_ROWS = 2;
 const TOTAL_COLS = 2;
 
 export function useMovesGamePad(moves: [MoveDetail, MoveDetail, MoveDetail, MoveDetail]) {
-  const [movesMatrix] = useState<MoveDetail[][]>([
+  const movesMatrix = [
     [moves[0], moves[1]],
     [moves[2], moves[3]],
-  ]);
+  ];
   const [selectedRow, setSelectedRow] = useState(0);
   const [selectedCol, setSelectedCol] = useState(0);
   useEffect(() => {
@@ -36,7 +36,7 @@ export function useMovesGamePad(moves: [MoveDetail, MoveDetail, MoveDetail, Move
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [selectedRow, selectedCol, movesMatrix]);
+  }, [selectedRow, selectedCol]);
 
   const handleClick = (rowIndex: number, colIndex: number) => {
     setSelectedRow(rowIndex);

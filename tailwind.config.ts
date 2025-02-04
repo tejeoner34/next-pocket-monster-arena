@@ -12,6 +12,10 @@ export default {
       colors: {
         background: 'var(--background)',
         backgroundSecondary: 'var(--background-secondary)',
+        infoBoxBackground: 'var(--info-box-background)',
+        infoBoxBorder: 'var(--info-box-border)',
+        infoBoxCriticalDamageText: 'var(--info-box-critical-damage-text)',
+        infoBoxMovesBorder: 'var(--info-box-moves-border)',
         foreground: 'var(--foreground)',
         buttonPrimary: 'var(--button-primary)',
         buttonSecondary: 'var(--button-secondary)',

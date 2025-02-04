@@ -10,8 +10,10 @@ export interface Pokemon {
   types: Type[];
   weight: number;
   hp: number;
-  arenaMoves: MoveDetail[];
+  arenaMoves: ArenaMoves;
 }
+
+export type ArenaMoves = [MoveDetail, MoveDetail, MoveDetail, MoveDetail];
 
 export interface ArenaPokemon extends Pokemon {
   currentHealth: number;
