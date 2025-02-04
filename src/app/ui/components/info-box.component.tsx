@@ -1,5 +1,5 @@
+import { useMovesGamePad } from '@/app/hooks/useMovesGamePad';
 import { MoveDetail } from '@/app/models/pokemon-model';
-import React, { useEffect, useState } from 'react';
 
 type InfoBoxProps = {
   boxMessage: string;
@@ -7,55 +7,8 @@ type InfoBoxProps = {
 };
 
 export default function InfoBox({ boxMessage, moves }: InfoBoxProps) {
-  // Track current selection with row and column indices
-  const [selectedRow, setSelectedRow] = useState(0);
-  const [selectedCol, setSelectedCol] = useState(0);
-  const [movesMatrix, setMovesMatrix] = useState<MoveDetail[][]>([]);
+  const { handleClick, movesMatrix, selectedCol, selectedRow } = useMovesGamePad(moves);
 
-  // Total rows and columns in the grid
-  const totalRows = 2;
-  const totalCols = 2;
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      switch (event.key) {
-        case 'ArrowUp':
-          setSelectedRow((prev) => (prev > 0 ? prev - 1 : prev));
-          break;
-        case 'ArrowDown':
-          setSelectedRow((prev) => (prev < totalRows - 1 ? prev + 1 : prev));
-          break;
-        case 'ArrowLeft':
-          setSelectedCol((prev) => (prev > 0 ? prev - 1 : prev));
-          break;
-        case 'ArrowRight':
-          setSelectedCol((prev) => (prev < totalCols - 1 ? prev + 1 : prev));
-          break;
-        case 'Enter':
-          const selectedIndex = selectedRow * totalCols + selectedCol;
-          if (moves[selectedIndex]) {
-            console.log(`Selected move: ${moves[selectedIndex].name}`);
-          }
-          break;
-        default:
-          break;
-      }
-    };
-
-    // Add event listener when component mounts
-    window.addEventListener('keydown', handleKeyDown);
-
-    // Clean up event listener when component unmounts
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [moves]);
-
-  useEffect(() => {
-    setMovesMatrix([
-      [moves[0], moves[1]],
-      [moves[2], moves[3]],
-    ]);
-  }, [moves]);
   return (
     <div>
       <div className="flex h-[140px] relative border-8 border-[#361e1e] z-[500]">
@@ -65,20 +18,20 @@ export default function InfoBox({ boxMessage, moves }: InfoBoxProps) {
           </p>
         </div>
         <div className="bg-foreground relative w-1/2 border-8 border-[#6e4d8c] flex flex-wrap justify-center text-xs pl-4">
-          {movesMatrix.map((row, rowIndez) => {
-            return row.map((move, columIndex) => {
-              const isSelected = selectedRow === rowIndez && selectedCol === columIndex;
+          {movesMatrix.map((row, rowIndex) => {
+            return row.map((move, colIndex) => {
+              const isSelected = selectedRow === rowIndex && selectedCol === colIndex;
               return (
-                <div
-                  key={columIndex}
-                  tabIndex={0}
+                <button
+                  key={colIndex}
                   className={`relative w-[45%] rounded-lg flex items-center cursor-pointer p-2 m-1 ${
-                    isSelected ? 'bg-gray-200' : ''
+                    isSelected ? 'selected' : ''
                   }`}
-                  // onClick={() => chooseMove(move, i)}
+                  onClick={() => handleClick(rowIndex, colIndex)}
+                  tabIndex={-1}
                 >
                   <p className="text-black">{move.name}</p>
-                </div>
+                </button>
               );
             });
           })}
@@ -87,6 +40,17 @@ export default function InfoBox({ boxMessage, moves }: InfoBoxProps) {
 )} */}
         </div>
       </div>
+      <style jsx>{`
+        .selected::before {
+          content: '\A';
+          border-style: solid;
+          border-width: 10px 15px 10px 0;
+          border-color: transparent #dd4397 transparent transparent;
+          position: absolute;
+          left: -19px;
+          transform: rotate(180deg);
+        }
+      `}</style>
     </div>
   );
 }
