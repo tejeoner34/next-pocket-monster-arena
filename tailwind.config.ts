@@ -16,6 +16,7 @@ export default {
         infoBoxBorder: 'var(--info-box-border)',
         infoBoxCriticalDamageText: 'var(--info-box-critical-damage-text)',
         infoBoxMovesBorder: 'var(--info-box-moves-border)',
+        pokemonInfoText: 'var(--pokemon-info-text)',
         foreground: 'var(--foreground)',
         buttonPrimary: 'var(--button-primary)',
         buttonSecondary: 'var(--button-secondary)',

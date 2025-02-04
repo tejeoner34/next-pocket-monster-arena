@@ -1,9 +1,9 @@
-import { PokemonArena } from '@/app/hooks/useArena';
+import { ArenaPokemon } from '@/app/models/pokemon-model';
 import Lifebar from './lifebar.component';
 import PokemonSprite from './pokemon-sprite.component';
 
 type PokemonInfoProps = {
-  pokemon: PokemonArena;
+  pokemon: ArenaPokemon;
 };
 
 export default function RivalPokemonInfo({ pokemon }: PokemonInfoProps) {
