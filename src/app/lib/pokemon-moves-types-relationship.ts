@@ -1,3 +1,10 @@
+import { ArenaMoves, PokemonType } from '../models/pokemon-model';
+
+const neutralDamage: TypeEffectivenessEntry = {
+  value: 1,
+  label: 'neutral',
+};
+
 const typeEffectiveness: TypeEffectivenessMap = {
   normal: {
     rock: { value: 0.5, label: 'not-effective' },
@@ -11,6 +18,8 @@ const typeEffectiveness: TypeEffectivenessMap = {
     grass: { value: 2, label: 'super-effective' },
     ice: { value: 2, label: 'super-effective' },
     dragon: { value: 0.5, label: 'not-effective' },
+    water: { value: 0.5, label: 'not-effective' },
+    fire: { value: 0.5, label: 'not-effective' },
   },
   water: {
     fire: { value: 2, label: 'super-effective' },
@@ -48,6 +57,7 @@ const typeEffectiveness: TypeEffectivenessMap = {
     flying: { value: 2, label: 'super-effective' },
     dragon: { value: 2, label: 'super-effective' },
     steel: { value: 0.5, label: 'not-effective' },
+    grass: { value: 2, label: 'super-effective' },
   },
   fighting: {
     normal: { value: 2, label: 'super-effective' },
@@ -79,6 +89,7 @@ const typeEffectiveness: TypeEffectivenessMap = {
     flying: { value: 0.5, label: 'not-effective' },
     ghost: { value: 0.5, label: 'not-effective' },
     steel: { value: 0.5, label: 'not-effective' },
+    fairy: { value: 0.5, label: 'not-effective' },
   },
   rock: {
     fire: { value: 2, label: 'super-effective' },
@@ -133,7 +144,6 @@ const typeEffectiveness: TypeEffectivenessMap = {
     ghost: { value: 0.5, label: 'not-effective' },
     steel: { value: 0, label: 'no-effect' },
   },
-
   ground: {
     fire: { value: 2, label: 'super-effective' },
     electric: { value: 2, label: 'super-effective' },
@@ -144,7 +154,6 @@ const typeEffectiveness: TypeEffectivenessMap = {
     bug: { value: 0.5, label: 'not-effective' },
     flying: { value: 0, label: 'no-effect' },
   },
-
   flying: {
     grass: { value: 2, label: 'super-effective' },
     fighting: { value: 2, label: 'super-effective' },
@@ -155,32 +164,17 @@ const typeEffectiveness: TypeEffectivenessMap = {
   },
 };
 
-type TypeEffectivenessLabel = 'super-effective' | 'normal' | 'not-effective' | 'no-effect';
+type TypeEffectivenessLabel =
+  | 'super-effective'
+  | 'normal'
+  | 'not-effective'
+  | 'no-effect'
+  | 'neutral';
 
 interface TypeEffectivenessEntry {
   value: number;
   label: TypeEffectivenessLabel;
 }
-
-type PokemonType =
-  | 'normal'
-  | 'fire'
-  | 'water'
-  | 'electric'
-  | 'grass'
-  | 'ice'
-  | 'fighting'
-  | 'poison'
-  | 'ground'
-  | 'flying'
-  | 'psychic'
-  | 'bug'
-  | 'rock'
-  | 'ghost'
-  | 'dragon'
-  | 'dark'
-  | 'steel'
-  | 'fairy';
 
 type TypeEffectivenessMap = {
   [attackingType in PokemonType]: {
@@ -191,7 +185,41 @@ type TypeEffectivenessMap = {
 export const getMoveEffectivinesInfo = (
   moveType: PokemonType,
   targetPokemonType: PokemonType
-): [number, string] | [] => {
+): TypeEffectivenessEntry => {
   const effectiveness = typeEffectiveness[moveType][targetPokemonType];
-  return effectiveness ? [effectiveness?.value, effectiveness?.label] : [];
+  return effectiveness ?? neutralDamage;
+};
+
+export const getMostEffectiveMove = (moves: ArenaMoves, rivalPokemonTypes: PokemonType[]) => {
+  const effectivenesArray = moves.map((move) => {
+    const effectiveness = getMoveEffectivinesInfo(
+      move.type.name as PokemonType,
+      rivalPokemonTypes[0]
+    );
+    return {
+      move,
+      effectiveness,
+    };
+  });
+  const mostEffective = effectivenesArray.sort(
+    (a, b) => b.effectiveness.value - a.effectiveness.value
+  )[0];
+  return mostEffective;
+};
+
+export const getRemainingHP = ({
+  pokemonHP,
+  receivedAttackEffectivinessIndex,
+  attackerBasePower,
+  attacksPower,
+}: {
+  pokemonHP: number;
+  receivedAttackEffectivinessIndex: number;
+  attackerBasePower: number;
+  attacksPower: number;
+}) => {
+  if (!attackerBasePower) return pokemonHP;
+  const remainingHP =
+    pokemonHP - (receivedAttackEffectivinessIndex * attackerBasePower * attacksPower) / 100;
+  return remainingHP > 0 ? remainingHP : 0;
 };

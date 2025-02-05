@@ -7,9 +7,12 @@ export interface Pokemon {
   order: number;
   sprites: Sprites;
   stats: Stat[];
-  types: Type[];
+  types: RawPokemonType[];
   weight: number;
   hp: number;
+  speed: number;
+  power: number;
+  processedTypes: PokemonType[];
   arenaMoves: ArenaMoves;
 }
 
@@ -54,11 +57,6 @@ export interface Stat {
   stat: Species;
 }
 
-export interface Type {
-  slot: number;
-  type: Species;
-}
-
 export interface MoveDetail {
   accuracy: number;
   id: number;
@@ -71,8 +69,13 @@ export interface MoveDetail {
 }
 
 export interface Type {
-  name: string;
+  name: PokemonType;
   url: string;
+}
+
+export interface RawPokemonType {
+  slot: number;
+  type: Type;
 }
 
 export interface Meta {
@@ -89,3 +92,23 @@ export interface Language {
   name: string;
   url: string;
 }
+
+export type PokemonType =
+  | 'normal'
+  | 'fire'
+  | 'water'
+  | 'electric'
+  | 'grass'
+  | 'ice'
+  | 'fighting'
+  | 'poison'
+  | 'ground'
+  | 'flying'
+  | 'psychic'
+  | 'bug'
+  | 'rock'
+  | 'ghost'
+  | 'dragon'
+  | 'dark'
+  | 'steel'
+  | 'fairy';

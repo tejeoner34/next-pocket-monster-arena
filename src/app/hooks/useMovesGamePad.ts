@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { MoveDetail } from '../models/pokemon-model';
+import { useArenaMovesContext } from '../context/arena-moves-context';
 
 const TOTAL_ROWS = 2;
 const TOTAL_COLS = 2;
@@ -11,6 +12,8 @@ export function useMovesGamePad(moves: [MoveDetail, MoveDetail, MoveDetail, Move
   ];
   const [selectedRow, setSelectedRow] = useState(0);
   const [selectedCol, setSelectedCol] = useState(0);
+  const { setMove } = useArenaMovesContext();
+
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       switch (event.key) {
@@ -25,6 +28,9 @@ export function useMovesGamePad(moves: [MoveDetail, MoveDetail, MoveDetail, Move
           break;
         case 'ArrowRight':
           setSelectedCol((prev) => (prev < TOTAL_COLS - 1 ? prev + 1 : prev));
+          break;
+        case 'Enter':
+          handleClick(selectedRow, selectedCol);
           break;
         default:
           break;
@@ -41,7 +47,9 @@ export function useMovesGamePad(moves: [MoveDetail, MoveDetail, MoveDetail, Move
   const handleClick = (rowIndex: number, colIndex: number) => {
     setSelectedRow(rowIndex);
     setSelectedCol(colIndex);
-    console.log(`Selected move: ${movesMatrix[rowIndex][colIndex].name}`);
+    const selectedMove = movesMatrix[rowIndex][colIndex];
+    console.log(`Selected move: ${selectedMove.name}`);
+    setMove(selectedMove);
   };
   return {
     handleClick,
