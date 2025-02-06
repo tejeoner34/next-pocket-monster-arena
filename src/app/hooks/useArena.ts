@@ -7,11 +7,14 @@ import {
   getMoveEffectivinesInfo,
   getRemainingHP,
 } from '../lib/pokemon-moves-types-relationship';
+import { getFasterPokemon } from '../lib/arena.utils';
 
 interface ArenaData {
   myPokemon: ArenaPokemon;
   rivalPokemon: ArenaPokemon;
   isOver: boolean;
+  turnOrder: ArenaPokemon[];
+  isTurnOver: boolean;
 }
 
 export function useArena() {
@@ -19,47 +22,46 @@ export function useArena() {
   const [arenaData, setArenaData] = useState<ArenaData>({} as ArenaData);
   const { chosenMove } = useArenaMovesContext();
 
+  const attack = () => {
+    // TODO: Implement attack logic
+  };
+
   const gameLoop = () => {
     // Game loop
-    while (!arenaData.isOver) {
-      // Obtain the pokemons selected moves
-      console.log(arenaData);
-      const myPokemonMoveDamageInfo = getMoveEffectivinesInfo(
-        chosenMove!.type.name,
-        arenaData.rivalPokemon.processedTypes[0]
-      );
-      const rivalPokemonMoveDamageInfo = getMostEffectiveMove(
-        arenaData.rivalPokemon.arenaMoves,
-        arenaData.myPokemon.processedTypes
-      );
+    console.log(arenaData);
+    const myPokemonMoveDamageInfo = getMoveEffectivinesInfo(
+      chosenMove!.type.name,
+      arenaData.rivalPokemon.processedTypes[0]
+    );
+    const rivalPokemonMoveDamageInfo = getMostEffectiveMove(
+      arenaData.rivalPokemon.arenaMoves,
+      arenaData.myPokemon.processedTypes
+    );
 
-      console.log(myPokemonMoveDamageInfo, rivalPokemonMoveDamageInfo);
+    console.log(myPokemonMoveDamageInfo, rivalPokemonMoveDamageInfo);
 
-      // Calculate the damage
-      const myPokemonsRemainingHP = getRemainingHP({
-        pokemonHP: arenaData.myPokemon.hp,
-        receivedAttackEffectivinessIndex: rivalPokemonMoveDamageInfo.effectiveness.value,
-        attackerBasePower: arenaData.rivalPokemon.power,
-        attacksPower: rivalPokemonMoveDamageInfo.move.power,
-      });
-      const rivalPokemonsRemainingHP = getRemainingHP({
-        pokemonHP: arenaData.rivalPokemon.hp,
-        receivedAttackEffectivinessIndex: myPokemonMoveDamageInfo.value,
-        attackerBasePower: arenaData.myPokemon.power,
-        attacksPower: chosenMove!.power,
-      });
+    // Calculate the damage
+    const myPokemonsRemainingHP = getRemainingHP({
+      pokemonHP: arenaData.myPokemon.hp,
+      receivedAttackEffectivinessIndex: rivalPokemonMoveDamageInfo.effectiveness.value,
+      attackerBasePower: arenaData.rivalPokemon.power,
+      attacksPower: rivalPokemonMoveDamageInfo.move.power,
+    });
+    const rivalPokemonsRemainingHP = getRemainingHP({
+      pokemonHP: arenaData.rivalPokemon.hp,
+      receivedAttackEffectivinessIndex: myPokemonMoveDamageInfo.value,
+      attackerBasePower: arenaData.myPokemon.power,
+      attacksPower: chosenMove!.power,
+    });
 
-      console.log(
-        'my pokemons remaining hp',
-        myPokemonsRemainingHP,
-        'rival pokemon remaining hp',
-        rivalPokemonsRemainingHP
-      );
+    console.log(
+      'my pokemons remaining hp',
+      myPokemonsRemainingHP,
+      'rival pokemon remaining hp',
+      rivalPokemonsRemainingHP
+    );
 
-      // Check who hits first
-      // Execute damage
-      break;
-    }
+    // Execute damage
   };
 
   useEffect(() => {
@@ -73,6 +75,8 @@ export function useArena() {
         myPokemon: initiatePokemonForArena(pokemons[0]),
         rivalPokemon: initiatePokemonForArena(pokemons[1]),
         isOver: false,
+        turnOrder: getFasterPokemon([arenaData.myPokemon, arenaData.rivalPokemon]),
+        isTurnOver: true,
       });
     }
   }, [pokemons]);
