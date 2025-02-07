@@ -64,12 +64,14 @@ export function ArenaProvider({ children }: { children: ReactNode }) {
     }
   }, [pokemons]);
 
-  //   useEffect(() => {
-  //     if (!arenaData.isTurnOver) return;
-  //     if (chosenMoves) {
-  //       attack();
-  //     }
-  //   }, [chosenMoves]);
+  const isGameOver = () => {
+    if (arenaData.myPokemon.hp <= 0 || arenaData.rivalPokemon.hp <= 0) {
+      setArenaData((prev) => ({
+        ...prev,
+        isOver: true,
+      }));
+    }
+  };
 
   const attack = (moves: ChosenMovesType) => {
     const { myPokemon, rivalPokemon } = moves;
@@ -100,13 +102,19 @@ export function ArenaProvider({ children }: { children: ReactNode }) {
 
     // Update the HP of the pokemons in order
     arenaData.turnOrder.forEach((pokemonKey) => {
+      const currentHealth =
+        pokemonKey === 'myPokemon' ? rivalPokemonsRemainingHP : myPokemonsRemainingHP;
+
       setArenaData((prev) => ({
         ...prev,
         [pokemonKey]: {
           ...prev[pokemonKey],
-          hp: pokemonKey === 'myPokemon' ? myPokemonsRemainingHP : rivalPokemonsRemainingHP,
+          currentHealth,
+          currentPercentageHealth: `${((currentHealth / prev[pokemonKey].hp) * 100).toString()}%`,
         },
       }));
+      // async problem. Either way we have to force wait to create animations
+      isGameOver();
     });
   };
 
