@@ -9,7 +9,7 @@ type PokemonInfoProps = {
 export default function PokemonInfo({ pokemon }: PokemonInfoProps) {
   return (
     <div className="flex w-full items-start relative justify-around">
-      <PokemonSprite sprite={pokemon.sprites.back_default} />
+      <PokemonSprite sprite={pokemon.sprites.back_default} statusAnimation={pokemon.status} />
       <Lifebar pokemon={pokemon} />
     </div>
   );

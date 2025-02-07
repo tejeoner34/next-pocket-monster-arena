@@ -14,7 +14,10 @@ export interface Pokemon {
   power: number;
   processedTypes: PokemonType[];
   arenaMoves: ArenaMoves;
+  status: ArenaPokemonStatus;
 }
+
+export type ArenaPokemonStatus = 'alive' | 'dead' | 'attacking' | 'waiting' | 'stunned';
 
 export type ArenaMoves = [MoveDetail, MoveDetail, MoveDetail, MoveDetail];
 

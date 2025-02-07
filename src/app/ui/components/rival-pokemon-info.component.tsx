@@ -10,7 +10,7 @@ export default function RivalPokemonInfo({ pokemon }: PokemonInfoProps) {
   return (
     <div className="flex w-full items-start relative justify-around">
       <Lifebar pokemon={pokemon} showLifePoints={false} />
-      <PokemonSprite sprite={pokemon.sprites.front_default} />
+      <PokemonSprite sprite={pokemon.sprites.front_default} statusAnimation={pokemon.status} />
     </div>
   );
 }

@@ -7,6 +7,7 @@ import {
   getRemainingHP,
 } from '../lib/pokemon-moves-types-relationship';
 import { ArenaPokemon, MoveDetail, Pokemon } from '../models/pokemon-model';
+import { wait } from '../lib/arena.utils';
 
 type ArenaContextType = {
   arenaData: ArenaData;
@@ -101,7 +102,9 @@ export function ArenaProvider({ children }: { children: ReactNode }) {
     });
 
     // Update the HP of the pokemons in order
-    arenaData.turnOrder.forEach((pokemonKey) => {
+    arenaData.turnOrder.forEach(async (pokemonKey) => {
+      arenaData[pokemonKey].status = 'attacking';
+      await wait(1000);
       const currentHealth =
         pokemonKey === 'myPokemon' ? rivalPokemonsRemainingHP : myPokemonsRemainingHP;
 
@@ -138,4 +141,5 @@ const initiatePokemonForArena = (pokemon: Pokemon): ArenaPokemon => ({
   currentHealth: pokemon.hp,
   currentPercentageHealth: '100%',
   isAlive: true,
+  status: 'alive',
 });
