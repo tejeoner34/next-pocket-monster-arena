@@ -5,7 +5,6 @@ import { pokemon } from '../ui/fonts';
 import { ThemeContextProvider } from '../context/theme-context';
 import ReactQueryProvider from '../context/query-client';
 import Header from '../ui/components/header';
-import { ArenaMovesProvider } from '../context/arena-moves-context';
 import { ArenaProvider } from '../context/arena.context';
 
 const geistSans = Geist({
@@ -36,9 +35,7 @@ export default function RootLayout({
         <Header />
         <ReactQueryProvider>
           <ThemeContextProvider>
-            <ArenaProvider>
-              <ArenaMovesProvider>{children}</ArenaMovesProvider>
-            </ArenaProvider>
+            <ArenaProvider>{children}</ArenaProvider>
           </ThemeContextProvider>
         </ReactQueryProvider>
       </body>
