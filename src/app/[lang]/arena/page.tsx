@@ -1,12 +1,12 @@
 'use client';
-import { useArena } from '@/app/hooks/useArena';
+import { useArenaContext } from '@/app/context/arena.context';
 import InfoBox from '@/app/ui/components/info-box.component';
 import PokemonInfo from '@/app/ui/components/pokemon-info.component';
 import RivalPokemonInfo from '@/app/ui/components/rival-pokemon-info.component';
 import ScreenPokeballPlaceholder from '@/app/ui/components/screen-pokeball-placeholder';
 
 export default function Page() {
-  const { arenaData, isLoading } = useArena();
+  const { arenaData, isLoading } = useArenaContext();
 
   return (
     <>

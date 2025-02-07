@@ -1,24 +1,35 @@
 'use client';
 import { createContext, ReactNode, useContext, useState } from 'react';
 import { MoveDetail } from '../models/pokemon-model';
+import { ArenaPokemonKeys } from './arena.context';
+
+type ChosenMovesType = {
+  [key in ArenaPokemonKeys]: MoveDetail;
+};
 
 type ArenaMovesContextType = {
   setMove: (move: MoveDetail) => void;
-  chosenMove: MoveDetail | undefined;
+  chosenMoves: ChosenMovesType | undefined;
 };
 
 export const ArenaMovesContext = createContext<undefined | ArenaMovesContextType>(undefined);
 
 export function ArenaMovesProvider({ children }: { children: ReactNode }) {
-  const [chosenMove, setChosenMove] = useState<MoveDetail | undefined>(undefined);
+  const [chosenMoves, setChosenMove] = useState<ChosenMovesType | undefined>(undefined);
 
   const setMove = (move: MoveDetail) => {
-    setChosenMove(move);
+    // Get here the other pokemon move
+    const currentTurnMoces = {
+      myPokemon: move,
+      rivalPokemon: move,
+    };
+
+    setChosenMove(currentTurnMoces);
   };
 
   const value = {
     setMove: setMove,
-    chosenMove: chosenMove,
+    chosenMoves,
   };
 
   return <ArenaMovesContext.Provider value={value}>{children}</ArenaMovesContext.Provider>;

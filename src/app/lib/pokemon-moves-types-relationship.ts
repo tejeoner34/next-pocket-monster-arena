@@ -204,7 +204,7 @@ export const getMostEffectiveMove = (moves: ArenaMoves, rivalPokemonTypes: Pokem
   const mostEffective = effectivenesArray.sort(
     (a, b) => b.effectiveness.value - a.effectiveness.value
   )[0];
-  return mostEffective;
+  return mostEffective.move;
 };
 
 export const getRemainingHP = ({

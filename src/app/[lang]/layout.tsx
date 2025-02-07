@@ -6,6 +6,7 @@ import { ThemeContextProvider } from '../context/theme-context';
 import ReactQueryProvider from '../context/query-client';
 import Header from '../ui/components/header';
 import { ArenaMovesProvider } from '../context/arena-moves-context';
+import { ArenaProvider } from '../context/arena.context';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -35,7 +36,9 @@ export default function RootLayout({
         <Header />
         <ReactQueryProvider>
           <ThemeContextProvider>
-            <ArenaMovesProvider>{children}</ArenaMovesProvider>
+            <ArenaProvider>
+              <ArenaMovesProvider>{children}</ArenaMovesProvider>
+            </ArenaProvider>
           </ThemeContextProvider>
         </ReactQueryProvider>
       </body>
