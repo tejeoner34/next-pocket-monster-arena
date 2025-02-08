@@ -8,6 +8,10 @@ import ScreenPokeballPlaceholder from '@/app/ui/components/screen-pokeball-place
 export default function Page() {
   const { arenaData, isLoading } = useArenaContext();
 
+  if (arenaData.isOver) {
+    return <div>Game over</div>;
+  }
+
   return (
     <>
       <ScreenPokeballPlaceholder isOpen={!isLoading} />

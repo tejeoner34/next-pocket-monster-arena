@@ -17,7 +17,7 @@ export interface Pokemon {
   status: ArenaPokemonStatus;
 }
 
-export type ArenaPokemonStatus = 'alive' | 'dead' | 'attacking' | 'waiting' | 'stunned';
+export type ArenaPokemonStatus = 'alive' | 'dead' | 'attacking' | 'waiting' | 'stunned' | 'idle';
 
 export type ArenaMoves = [MoveDetail, MoveDetail, MoveDetail, MoveDetail];
 

@@ -65,8 +65,14 @@ export function ArenaProvider({ children }: { children: ReactNode }) {
     }
   }, [pokemons]);
 
+  useEffect(() => {
+    if (arenaData.myPokemon && arenaData.rivalPokemon) {
+      isGameOver();
+    }
+  }, [arenaData.myPokemon?.currentHealth, arenaData.rivalPokemon?.currentHealth]);
+
   const isGameOver = () => {
-    if (arenaData.myPokemon.hp <= 0 || arenaData.rivalPokemon.hp <= 0) {
+    if (arenaData.myPokemon.currentHealth <= 0 || arenaData.rivalPokemon.currentHealth <= 0) {
       setArenaData((prev) => ({
         ...prev,
         isOver: true,
@@ -74,51 +80,50 @@ export function ArenaProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const attack = (moves: ChosenMovesType) => {
-    const { myPokemon, rivalPokemon } = moves;
-    // TODO: Implement attack logic
-    const myPokemonMoveDamageInfo = getMoveEffectivinesInfo(
-      myPokemon.type.name,
-      arenaData.rivalPokemon.processedTypes[0]
-    );
-
-    const rivalPokemonMoveDamageInfo = getMoveEffectivinesInfo(
-      rivalPokemon.type.name,
-      arenaData.myPokemon.processedTypes[0]
-    );
-
-    // Calculate the damage
-    const myPokemonsRemainingHP = getRemainingHP({
-      pokemonHP: arenaData.myPokemon.hp,
-      receivedAttackEffectivinessIndex: rivalPokemonMoveDamageInfo.value,
-      attackerBasePower: arenaData.rivalPokemon.power,
-      attacksPower: rivalPokemon.power,
-    });
-    const rivalPokemonsRemainingHP = getRemainingHP({
-      pokemonHP: arenaData.rivalPokemon.hp,
-      receivedAttackEffectivinessIndex: myPokemonMoveDamageInfo.value,
-      attackerBasePower: arenaData.myPokemon.power,
-      attacksPower: myPokemon.power,
-    });
-
+  const attack = async (moves: ChosenMovesType) => {
     // Update the HP of the pokemons in order
-    arenaData.turnOrder.forEach(async (pokemonKey) => {
-      arenaData[pokemonKey].status = 'attacking';
-      await wait(1000);
-      const currentHealth =
-        pokemonKey === 'myPokemon' ? rivalPokemonsRemainingHP : myPokemonsRemainingHP;
+    for (const currentAtackerKey of arenaData.turnOrder) {
+      const nonAttackingPokemon: { [key in ArenaPokemonKeys]: ArenaPokemonKeys } = {
+        myPokemon: 'rivalPokemon',
+        rivalPokemon: 'myPokemon',
+      };
+
+      const currentHealth = getRemainingHP({
+        pokemonHP: arenaData[nonAttackingPokemon[currentAtackerKey]].currentHealth,
+        receivedAttackEffectivinessIndex: getMoveEffectivinesInfo(
+          moves[currentAtackerKey].type.name,
+          arenaData[nonAttackingPokemon[currentAtackerKey]].processedTypes[0]
+        ).value,
+        attackerBasePower: arenaData[currentAtackerKey].power,
+        attacksPower: moves[currentAtackerKey].power,
+      });
+
+      // Set the status to 'attacking' before the animation
+      setArenaData((prev) => ({
+        ...prev,
+        [currentAtackerKey]: {
+          ...prev[currentAtackerKey],
+          status: 'attacking',
+        },
+      }));
+      await wait(1000); // Wait for the animation to complete
 
       setArenaData((prev) => ({
         ...prev,
-        [pokemonKey]: {
-          ...prev[pokemonKey],
+        [nonAttackingPokemon[currentAtackerKey]]: {
+          ...prev[nonAttackingPokemon[currentAtackerKey]],
           currentHealth,
-          currentPercentageHealth: `${((currentHealth / prev[pokemonKey].hp) * 100).toString()}%`,
+          currentPercentageHealth: `${(
+            (currentHealth / prev[nonAttackingPokemon[currentAtackerKey]].hp) *
+            100
+          ).toString()}%`,
+        },
+        [currentAtackerKey]: {
+          ...prev[currentAtackerKey],
+          status: 'idle',
         },
       }));
-      // async problem. Either way we have to force wait to create animations
-      isGameOver();
-    });
+    }
   };
 
   return (
@@ -141,5 +146,5 @@ const initiatePokemonForArena = (pokemon: Pokemon): ArenaPokemon => ({
   currentHealth: pokemon.hp,
   currentPercentageHealth: '100%',
   isAlive: true,
-  status: 'alive',
+  status: 'idle',
 });
