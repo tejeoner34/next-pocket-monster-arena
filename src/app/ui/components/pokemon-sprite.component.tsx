@@ -14,13 +14,13 @@ export default function PokemonSprite({
     defeated: 'animate-defeat',
     alive: '',
     waiting: '',
-    stunned: '',
+    stunned: 'animate-stunned',
     idle: '',
   };
 
   return (
     <div className={`relative w-1/2 max-w-[200px]`}>
-      <div className={`relative w-full h-full ${animationClasses[statusAnimation]}`}>
+      <div className={`relative w-full h-full z-10 ${animationClasses[statusAnimation]}`}>
         <Image
           src={sprite}
           alt="pokemon image"

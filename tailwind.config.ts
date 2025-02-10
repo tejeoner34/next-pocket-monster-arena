@@ -30,6 +30,7 @@ export default {
         attack: 'attack 0.2s ease-in-out',
         'rival-attack': 'rival-attack 0.2s ease-in-out',
         defeat: 'defeat 1s forwards',
+        stunned: 'stunned 0.5s 0.3s forwards',
       },
       keyframes: {
         attack: {
@@ -45,6 +46,11 @@ export default {
         defeat: {
           from: { opacity: '1' },
           to: { opacity: '0' },
+        },
+        stunned: {
+          '0%': { opacity: '0' },
+          '50%': { opacity: '1' },
+          '100%': { opacity: '0' },
         },
       },
     },
