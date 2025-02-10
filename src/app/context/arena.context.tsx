@@ -38,7 +38,7 @@ export function ArenaProvider({ children }: { children: ReactNode }) {
   const [chosenMoves, setChosenMove] = useState<ChosenMovesType>({} as ChosenMovesType);
 
   const setMove = (move: MoveDetail) => {
-    // Get here the other pokemon move
+    if (!arenaData.isTurnOver || arenaData.isOver) return;
     const currentTurnMoces = {
       myPokemon: move,
       rivalPokemon: getMostEffectiveMove(
@@ -65,24 +65,24 @@ export function ArenaProvider({ children }: { children: ReactNode }) {
     }
   }, [pokemons]);
 
-  useEffect(() => {
-    if (arenaData.myPokemon && arenaData.rivalPokemon) {
-      isGameOver();
-    }
-  }, [arenaData.myPokemon?.currentHealth, arenaData.rivalPokemon?.currentHealth]);
-
-  const isGameOver = () => {
-    if (arenaData.myPokemon.currentHealth <= 0 || arenaData.rivalPokemon.currentHealth <= 0) {
+  const isGameOver = (attackedPokemonHP: number) => {
+    const isOver = attackedPokemonHP <= 0;
+    if (isOver) {
       setArenaData((prev) => ({
         ...prev,
         isOver: true,
+        isTurnOver: true,
       }));
     }
+    return isOver;
   };
 
   const attack = async (moves: ChosenMovesType) => {
-    // Update the HP of the pokemons in order
+    let localIsGameOver = false;
+
     for (const currentAtackerKey of arenaData.turnOrder) {
+      if (localIsGameOver) break;
+
       const nonAttackingPokemon: { [key in ArenaPokemonKeys]: ArenaPokemonKeys } = {
         myPokemon: 'rivalPokemon',
         rivalPokemon: 'myPokemon',
@@ -98,15 +98,26 @@ export function ArenaProvider({ children }: { children: ReactNode }) {
         attacksPower: moves[currentAtackerKey].power,
       });
 
-      // Set the status to 'attacking' before the animation
       setArenaData((prev) => ({
         ...prev,
         [currentAtackerKey]: {
           ...prev[currentAtackerKey],
           status: 'attacking',
         },
+        isTurnOver: false,
       }));
-      await wait(1000); // Wait for the animation to complete
+      await wait(1000);
+      // This is not wokring REVISE
+      if (currentHealth <= 0) {
+        setArenaData((prev) => ({
+          ...prev,
+          [nonAttackingPokemon[currentAtackerKey]]: {
+            ...prev[nonAttackingPokemon[currentAtackerKey]],
+            status: 'dead',
+          },
+        }));
+      }
+      await wait(1000);
 
       setArenaData((prev) => ({
         ...prev,
@@ -123,7 +134,13 @@ export function ArenaProvider({ children }: { children: ReactNode }) {
           status: 'idle',
         },
       }));
+
+      localIsGameOver = isGameOver(currentHealth);
     }
+    setArenaData((prev) => ({
+      ...prev,
+      isTurnOver: true,
+    }));
   };
 
   return (

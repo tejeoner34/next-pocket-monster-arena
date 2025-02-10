@@ -1,5 +1,4 @@
 'use client';
-import { useState } from 'react';
 import { useArenaContext } from '@/app/context/arena.context';
 import GameOverModal from '@/app/ui/components/game-over-modal.component';
 import InfoBox from '@/app/ui/components/info-box.component';
@@ -9,7 +8,6 @@ import ScreenPokeballPlaceholder from '@/app/ui/components/screen-pokeball-place
 
 export default function Page() {
   const { arenaData, isLoading } = useArenaContext();
-  const [isGameOverModalOpen, setIsGameOverModalOpen] = useState(false);
 
   return (
     <>
@@ -60,7 +58,7 @@ export default function Page() {
           </div>
         )}
       </div>
-      <GameOverModal isOpen={isGameOverModalOpen} onClose={() => setIsGameOverModalOpen(false)} />
+      <GameOverModal isOpen={arenaData.isOver} onClose={() => {}} />
     </>
   );
 }

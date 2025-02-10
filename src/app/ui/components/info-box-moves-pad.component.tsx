@@ -1,3 +1,4 @@
+import { useArenaContext } from '@/app/context/arena.context';
 import { useMovesGamePad } from '@/app/hooks/useMovesGamePad';
 import { MoveDetail } from '@/app/models/pokemon-model';
 
@@ -7,6 +8,7 @@ type InfoBoxMovesPadProps = {
 
 export default function InfoBoxMovesPad({ moves }: InfoBoxMovesPadProps) {
   const { handleClick, movesMatrix, selectedCol, selectedRow } = useMovesGamePad(moves);
+  const { arenaData } = useArenaContext();
 
   return (
     <div className="bg-foreground relative w-1/2 border-8 border-[#6e4d8c] flex flex-wrap justify-center text-xs pl-4">
@@ -27,9 +29,9 @@ export default function InfoBoxMovesPad({ moves }: InfoBoxMovesPadProps) {
           );
         });
       })}
-      {/* {hasSelectedMove && (
-  <div className="absolute w-full h-full bg-gray-200 opacity-50 left-0"></div>
-)} */}
+      {!arenaData.isTurnOver && (
+        <div className="absolute w-full h-full bg-gray-200 opacity-50 left-0"></div>
+      )}
       <style jsx>{`
         .selected::before {
           content: '\A';

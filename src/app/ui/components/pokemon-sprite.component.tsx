@@ -52,6 +52,20 @@ export default function PokemonSprite({
         .rival-attacking {
           animation: rivalPokemonAttack 0.2s ease-in-out;
         }
+
+        .defeat {
+          animation: defeat 1s forwards;
+        }
+
+        @keyframes defeat {
+          from {
+            opacity: 1;
+          }
+
+          to {
+            opacity: 0;
+          }
+        }
       `}</style>
     </div>
   );

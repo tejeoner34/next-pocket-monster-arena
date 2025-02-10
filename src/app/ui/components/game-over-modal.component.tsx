@@ -1,4 +1,4 @@
-import { useRouter } from 'next/router';
+'use client';
 import Link from 'next/link';
 
 export default function GameOverModal({
@@ -8,10 +8,8 @@ export default function GameOverModal({
   isOpen: boolean;
   onClose: () => void;
 }) {
-  const router = useRouter();
-
   const handlePlayAgain = () => {
-    router.push('/arena');
+    window.location.reload();
   };
 
   if (!isOpen) return null;
