@@ -6,7 +6,7 @@ import {
   getMostEffectiveMove,
   getRemainingHP,
 } from '../lib/pokemon-moves-types-relationship';
-import { ArenaPokemon, MoveDetail, Pokemon } from '../models/pokemon-model';
+import { ArenaPokemon, arenaPokemonStatus, MoveDetail, Pokemon } from '../models/pokemon-model';
 import { wait } from '../lib/arena.utils';
 
 type ArenaContextType = {
@@ -22,6 +22,7 @@ export interface ArenaData {
   isOver: boolean;
   turnOrder: [ArenaPokemonKeys, ArenaPokemonKeys];
   isTurnOver: boolean;
+  information: string;
 }
 
 export type ArenaPokemonKeys = 'myPokemon' | 'rivalPokemon';
@@ -36,6 +37,23 @@ export function ArenaProvider({ children }: { children: ReactNode }) {
   const { pokemons, isLoading } = usePokemon();
   const [arenaData, setArenaData] = useState<ArenaData>({} as ArenaData);
   const [chosenMoves, setChosenMove] = useState<ChosenMovesType>({} as ChosenMovesType);
+
+  const updateArenaData = (updates: Partial<ArenaData>) => {
+    setArenaData((prev) => ({
+      ...prev,
+      ...updates,
+    }));
+  };
+
+  const updatePokemonData = (key: ArenaPokemonKeys, updates: Partial<ArenaPokemon>) => {
+    setArenaData((prev) => ({
+      ...prev,
+      [key]: {
+        ...prev[key],
+        ...updates,
+      },
+    }));
+  };
 
   const setMove = (move: MoveDetail) => {
     if (!arenaData.isTurnOver || arenaData.isOver) return;
@@ -55,12 +73,13 @@ export function ArenaProvider({ children }: { children: ReactNode }) {
     if (pokemons) {
       const myPokemon = initiatePokemonForArena(pokemons[0]);
       const rivalPokemon = initiatePokemonForArena(pokemons[1]);
-      setArenaData({
+      updateArenaData({
         myPokemon,
         rivalPokemon,
         isOver: false,
         turnOrder: ['myPokemon', 'rivalPokemon'],
         isTurnOver: true,
+        information: '',
       });
     }
   }, [pokemons]);
@@ -68,11 +87,10 @@ export function ArenaProvider({ children }: { children: ReactNode }) {
   const isGameOver = (attackedPokemonHP: number) => {
     const isOver = attackedPokemonHP <= 0;
     if (isOver) {
-      setArenaData((prev) => ({
-        ...prev,
+      updateArenaData({
         isOver: true,
         isTurnOver: true,
-      }));
+      });
     }
     return isOver;
   };
@@ -97,50 +115,37 @@ export function ArenaProvider({ children }: { children: ReactNode }) {
         attackerBasePower: arenaData[currentAtackerKey].power,
         attacksPower: moves[currentAtackerKey].power,
       });
-
-      setArenaData((prev) => ({
-        ...prev,
-        [currentAtackerKey]: {
-          ...prev[currentAtackerKey],
-          status: 'attacking',
-        },
+      console.log('entre turnos', currentHealth, moves[currentAtackerKey]);
+      updateArenaData({
+        information: `${arenaData[currentAtackerKey].name} used ${moves[currentAtackerKey].name}!`,
         isTurnOver: false,
-      }));
+        [currentAtackerKey]: {
+          ...arenaData[currentAtackerKey],
+          status: arenaPokemonStatus.attacking,
+        },
+      });
       await wait(1000);
-      // This is not wokring REVISE
+
+      updatePokemonData(nonAttackingPokemon[currentAtackerKey], {
+        currentHealth,
+        currentPercentageHealth: `${(
+          (currentHealth / arenaData[nonAttackingPokemon[currentAtackerKey]].hp) *
+          100
+        ).toString()}%`,
+      });
+
+      updatePokemonData(currentAtackerKey, { status: arenaPokemonStatus.idle });
+
       if (currentHealth <= 0) {
-        setArenaData((prev) => ({
-          ...prev,
-          [nonAttackingPokemon[currentAtackerKey]]: {
-            ...prev[nonAttackingPokemon[currentAtackerKey]],
-            status: 'dead',
-          },
-        }));
+        updatePokemonData(nonAttackingPokemon[currentAtackerKey], {
+          status: arenaPokemonStatus.defeated,
+        });
       }
       await wait(1000);
 
-      setArenaData((prev) => ({
-        ...prev,
-        [nonAttackingPokemon[currentAtackerKey]]: {
-          ...prev[nonAttackingPokemon[currentAtackerKey]],
-          currentHealth,
-          currentPercentageHealth: `${(
-            (currentHealth / prev[nonAttackingPokemon[currentAtackerKey]].hp) *
-            100
-          ).toString()}%`,
-        },
-        [currentAtackerKey]: {
-          ...prev[currentAtackerKey],
-          status: 'idle',
-        },
-      }));
-
       localIsGameOver = isGameOver(currentHealth);
     }
-    setArenaData((prev) => ({
-      ...prev,
-      isTurnOver: true,
-    }));
+    updateArenaData({ isTurnOver: true });
   };
 
   return (

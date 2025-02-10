@@ -22,10 +22,7 @@ export default function Page() {
             <div className="flex justify-around items-center w-full">
               <PokemonInfo pokemon={arenaData.myPokemon} />
             </div>
-            <InfoBox
-              boxMessage="this is a placeholder message"
-              moves={arenaData.myPokemon.arenaMoves}
-            />
+            <InfoBox boxMessage={arenaData.information} moves={arenaData.myPokemon.arenaMoves} />
             <div>
               <button
                 // onClick={() => setMovesContainerOpen(!movesContainerOpen)}

@@ -17,7 +17,21 @@ export interface Pokemon {
   status: ArenaPokemonStatus;
 }
 
-export type ArenaPokemonStatus = 'alive' | 'dead' | 'attacking' | 'waiting' | 'stunned' | 'idle';
+export type ArenaPokemonStatus =
+  | 'alive'
+  | 'defeated'
+  | 'attacking'
+  | 'waiting'
+  | 'stunned'
+  | 'idle';
+export const arenaPokemonStatus: Record<ArenaPokemonStatus, ArenaPokemonStatus> = {
+  alive: 'alive',
+  defeated: 'defeated',
+  attacking: 'attacking',
+  waiting: 'waiting',
+  stunned: 'stunned',
+  idle: 'idle',
+};
 
 export type ArenaMoves = [MoveDetail, MoveDetail, MoveDetail, MoveDetail];
 

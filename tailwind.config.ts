@@ -26,6 +26,27 @@ export default {
         textSecondary: 'var(--text-secondary)',
         textTertiary: 'var(--text-tertiary)',
       },
+      animation: {
+        attack: 'attack 0.2s ease-in-out',
+        'rival-attack': 'rival-attack 0.2s ease-in-out',
+        defeat: 'defeat 1s forwards',
+      },
+      keyframes: {
+        attack: {
+          '0%': { transform: 'translateX(0)' },
+          '50%': { transform: 'translateX(100px)' },
+          '100%': { transform: 'translateX(0)' },
+        },
+        'rival-attack': {
+          '0%': { transform: 'translateX(0)' },
+          '50%': { transform: 'translateX(-100px)' },
+          '100%': { transform: 'translateX(0)' },
+        },
+        defeat: {
+          from: { opacity: '1' },
+          to: { opacity: '0' },
+        },
+      },
     },
   },
   plugins: [],
