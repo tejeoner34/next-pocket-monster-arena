@@ -22,7 +22,6 @@ export default function InfoBoxMovesPad({ moves }: InfoBoxMovesPadProps) {
                 isSelected ? 'selected' : ''
               }`}
               onClick={() => handleClick(rowIndex, colIndex)}
-              // tabIndex={-1}
             >
               <p className="text-black">{move.name}</p>
             </button>

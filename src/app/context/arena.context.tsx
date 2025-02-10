@@ -1,13 +1,14 @@
 'use client';
 import { createContext, ReactNode, useContext, useState, useEffect } from 'react';
-import { usePokemon } from '../hooks/usePokemon';
+import { usePokemon } from '../hooks';
+import { ArenaPokemon, arenaPokemonStatus, MoveDetail, Pokemon } from '../models/pokemon-model';
 import {
+  infoBoxMessageValues,
   getMoveEffectivinesInfo,
   getMostEffectiveMove,
   getRemainingHP,
-} from '../lib/pokemon-moves-types-relationship';
-import { ArenaPokemon, arenaPokemonStatus, MoveDetail, Pokemon } from '../models/pokemon-model';
-import { wait } from '../lib/arena.utils';
+  wait,
+} from '../lib';
 
 type ArenaContextType = {
   arenaData: ArenaData;
@@ -22,7 +23,7 @@ export interface ArenaData {
   isOver: boolean;
   turnOrder: [ArenaPokemonKeys, ArenaPokemonKeys];
   isTurnOver: boolean;
-  information: string;
+  message: string;
 }
 
 export type ArenaPokemonKeys = 'myPokemon' | 'rivalPokemon';
@@ -79,7 +80,7 @@ export function ArenaProvider({ children }: { children: ReactNode }) {
         isOver: false,
         turnOrder: ['myPokemon', 'rivalPokemon'],
         isTurnOver: true,
-        information: '',
+        message: '',
       });
     }
   }, [pokemons]);
@@ -117,7 +118,10 @@ export function ArenaProvider({ children }: { children: ReactNode }) {
       });
       console.log('entre turnos', currentHealth, moves[currentAtackerKey]);
       updateArenaData({
-        information: `${arenaData[currentAtackerKey].name} used ${moves[currentAtackerKey].name}!`,
+        message: infoBoxMessageValues.getAttackerPlusMoveName(
+          moves[currentAtackerKey].name,
+          arenaData[currentAtackerKey].name
+        ),
         isTurnOver: false,
         [currentAtackerKey]: {
           ...arenaData[currentAtackerKey],
@@ -125,6 +129,10 @@ export function ArenaProvider({ children }: { children: ReactNode }) {
         },
       });
       await wait(1000);
+
+      updatePokemonData(nonAttackingPokemon[currentAtackerKey], {
+        status: arenaPokemonStatus.stunned,
+      });
 
       updatePokemonData(nonAttackingPokemon[currentAtackerKey], {
         currentHealth,
@@ -142,6 +150,10 @@ export function ArenaProvider({ children }: { children: ReactNode }) {
         });
       }
       await wait(1000);
+
+      updatePokemonData(nonAttackingPokemon[currentAtackerKey], {
+        status: arenaPokemonStatus.idle,
+      });
 
       localIsGameOver = isGameOver(currentHealth);
     }
