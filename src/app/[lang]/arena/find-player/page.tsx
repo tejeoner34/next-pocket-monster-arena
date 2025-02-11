@@ -1,17 +1,23 @@
 'use client';
+import { useCopyClipboard } from '@/app/hooks/useCopyClipboard';
 import { useSocketIoContext } from '@/app/hooks/useSocketIoContext';
 import { useState } from 'react';
 
 export default function Page() {
   const [rivalId, setRivalId] = useState('');
   const { onlineId, challengeUser } = useSocketIoContext();
+  const { isCopied, copyToClipboard } = useCopyClipboard();
+
   return (
     <div className="w-full h-full flex justify-center pt-2.5">
       <div className="min-w-[350px] max-w-[500px] h-fit border-8 border-white p-4 flex flex-col items-center justify-center text-center shadow-lg">
         <h2 className="text-xs leading-5">Your ID: {onlineId}</h2>
         <div>
-          <button className="px-2 py-1 cursor-pointer text-black bg-white rounded-md">
-            Copy ID
+          <button
+            className="px-2 py-1 cursor-pointer text-black bg-white rounded-md"
+            onClick={() => copyToClipboard(onlineId)}
+          >
+            {isCopied ? 'Copied' : 'Copy ID'}
           </button>
         </div>
         <form
