@@ -1,11 +1,10 @@
 'use client';
+import { useMultiplayerContext } from '@/app/hooks';
 import { useCopyClipboard } from '@/app/hooks/useCopyClipboard';
-import { useSocketIoContext } from '@/app/hooks/useSocketIoContext';
-import { useState } from 'react';
+import FindPlayerForm from '@/app/ui/components/find-player-form.component';
 
 export default function Page() {
-  const [rivalId, setRivalId] = useState('');
-  const { onlineId, challengeUser } = useSocketIoContext();
+  const { onlineId } = useMultiplayerContext();
   const { isCopied, copyToClipboard } = useCopyClipboard();
 
   return (
@@ -20,33 +19,7 @@ export default function Page() {
             {isCopied ? 'Copied' : 'Copy ID'}
           </button>
         </div>
-        <form
-          className="flex flex-col items-center max-w-[400px] w-full"
-          action={() => {
-            challengeUser({ challengerId: onlineId, rivalId });
-          }}
-        >
-          <input
-            type="text"
-            placeholder="Type Rival ID"
-            className="p-2 w-full border border-gray-300 rounded-md text-black"
-            onChange={(e) => setRivalId(e.target.value)}
-          />
-          <p className="text-white">Error Message</p>
-          <button
-            type="submit"
-            className="max-w-[300px] p-2 cursor-pointer text-black bg-white rounded-md"
-          >
-            Challenge
-          </button>
-          <p>Challenge Status Message</p>
-          <button
-            type="button"
-            className="max-w-[300px] p-2 cursor-pointer text-black bg-white rounded-md"
-          >
-            Go to Battle
-          </button>
-        </form>
+        <FindPlayerForm />
       </div>
     </div>
   );

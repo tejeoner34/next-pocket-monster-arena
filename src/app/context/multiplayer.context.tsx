@@ -19,9 +19,9 @@ const socketActions = {
   challengeResponse: 'challenge-response',
 };
 
-export const SocketIoContext = createContext<undefined | SocketIoContextType>(undefined);
+export const MultiplayerContext = createContext<undefined | SocketIoContextType>(undefined);
 
-export const SocketIoProvider = ({ children }: { children: ReactNode }) => {
+export const MultiplayerProvider = ({ children }: { children: ReactNode }) => {
   const [onlineId, setOnlineId] = useState<string>('');
 
   const emit = <T,>(eventName: string, data: T) => {
@@ -55,8 +55,8 @@ export const SocketIoProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   return (
-    <SocketIoContext.Provider value={{ onlineId, emit, challengeUser }}>
+    <MultiplayerContext.Provider value={{ onlineId, emit, challengeUser }}>
       {children}
-    </SocketIoContext.Provider>
+    </MultiplayerContext.Provider>
   );
 };

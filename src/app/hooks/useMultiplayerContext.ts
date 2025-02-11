@@ -1,8 +1,8 @@
 import { useContext } from 'react';
-import { SocketIoContext } from '../context';
+import { MultiplayerContext } from '../context';
 
-export function useSocketIoContext() {
-  const context = useContext(SocketIoContext);
+export function useMultiplayerContext() {
+  const context = useContext(MultiplayerContext);
 
   if (!context) {
     throw new Error('useSocketIoContext must be used within an SocketIoProvider');
