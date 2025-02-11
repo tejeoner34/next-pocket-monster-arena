@@ -13,7 +13,7 @@ export default function Page() {
     <>
       <ScreenPokeballPlaceholder isOpen={!isLoading} />
 
-      <div className="relative overflow-hidden h-[540px] rounded bg-gradient-to-b from-[#242400] to-[#DDECE0]">
+      <div className="relative w-full overflow-hidden h-[540px] rounded bg-gradient-to-b from-[#242400] to-[#DDECE0]">
         {arenaData.myPokemon && arenaData.rivalPokemon && (
           <div>
             <div className="flex flex-row-reverse justify-around">
