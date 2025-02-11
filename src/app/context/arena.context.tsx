@@ -80,7 +80,7 @@ export function ArenaProvider({ children }: { children: ReactNode }) {
         isOver: false,
         turnOrder: ['myPokemon', 'rivalPokemon'],
         isTurnOver: true,
-        message: '',
+        message: infoBoxMessageValues.default,
       });
     }
   }, [pokemons]);
