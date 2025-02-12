@@ -2,9 +2,10 @@
 import { useMultiplayerContext } from '@/app/hooks';
 import { useCopyClipboard } from '@/app/hooks/useCopyClipboard';
 import FindPlayerForm from '@/app/ui/components/find-player-form.component';
+import ReceiveChallengedModal from '@/app/ui/components/receive-challenge-modal.component';
 
 export default function Page() {
-  const { onlineId } = useMultiplayerContext();
+  const { challengerId, onlineId, declineChallenge, acceptChallenge } = useMultiplayerContext();
   const { isCopied, copyToClipboard } = useCopyClipboard();
 
   return (
@@ -21,6 +22,12 @@ export default function Page() {
         </div>
         <FindPlayerForm />
       </div>
+      <ReceiveChallengedModal
+        challenderId={challengerId}
+        isOpen={!!challengerId}
+        onAccept={acceptChallenge}
+        onDecline={declineChallenge}
+      />
     </div>
   );
 }

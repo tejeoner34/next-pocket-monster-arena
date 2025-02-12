@@ -1,11 +1,15 @@
 'use client';
 import { createContext, ReactNode, useEffect, useState } from 'react';
 import { socket } from '../api';
+import { ChallengerDataType, ChallengeResponseType, ReceiveChallengeType } from '../models';
 
 type SocketIoContextType = {
-  onlineId: string;
-  emit: <T>(eventName: string, data: T) => void;
+  acceptChallenge: () => void;
+  challengerId: ChallengerDataType['challengerId'];
   challengeUser: ({ challengerId, rivalId }: { challengerId: string; rivalId: string }) => void;
+  declineChallenge: () => void;
+  emit: <T>(eventName: string, data: T) => void;
+  onlineId: string;
 };
 
 const socketActions = {
@@ -23,6 +27,7 @@ export const MultiplayerContext = createContext<undefined | SocketIoContextType>
 
 export const MultiplayerProvider = ({ children }: { children: ReactNode }) => {
   const [onlineId, setOnlineId] = useState<string>('');
+  const [challengerId, setChallengerId] = useState<ChallengerDataType['challengerId']>('');
 
   const emit = <T,>(eventName: string, data: T) => {
     socket.emit(eventName, data);
@@ -30,6 +35,21 @@ export const MultiplayerProvider = ({ children }: { children: ReactNode }) => {
 
   const challengeUser = ({ challengerId, rivalId }: { challengerId: string; rivalId: string }) => {
     emit(socketActions.challengeUser, { challengerId, rivalId });
+  };
+
+  const resetChallengerData = () => {
+    setChallengerId('');
+  };
+
+  const declineChallenge = () => {
+    //TODO: emit challenge response to server
+    emit(socketActions.challengeResponse, { ok: false, accept: false, message: 'Declined' });
+    resetChallengerData();
+  };
+
+  const acceptChallenge = () => {
+    //TODO: emit challenge response to server
+    emit(socketActions.challengeResponse, { ok: true, accept: true, message: 'Accepted' });
   };
 
   useEffect(() => {
@@ -41,11 +61,12 @@ export const MultiplayerProvider = ({ children }: { children: ReactNode }) => {
       setOnlineId(socket.id || '');
     });
 
-    socket.on(socketActions.receiveChallenge, (data: string) => {
+    socket.on(socketActions.receiveChallenge, (data: ReceiveChallengeType) => {
       console.log('RECEIVE CHALLENGE', data);
+      setChallengerId(data.challengerId);
     });
 
-    socket.on(socketActions.challengeResponse, (data: string) => {
+    socket.on(socketActions.challengeResponse, (data: ChallengeResponseType) => {
       console.log('CHALLENGE RESPONSE', data);
     });
 
@@ -55,7 +76,9 @@ export const MultiplayerProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   return (
-    <MultiplayerContext.Provider value={{ onlineId, emit, challengeUser }}>
+    <MultiplayerContext.Provider
+      value={{ challengerId, onlineId, acceptChallenge, emit, challengeUser, declineChallenge }}
+    >
       {children}
     </MultiplayerContext.Provider>
   );
