@@ -1,7 +1,13 @@
 'use client';
 import { createContext, ReactNode, useEffect, useState } from 'react';
 import { socket } from '../api';
-import { ChallengerDataType, ChallengeResponseType, ReceiveChallengeType } from '../models';
+import {
+  ChallengerDataType,
+  ChallengeRequestStatus,
+  ChallengeResponseType,
+  ReceiveChallengeType,
+  REQUEST_STATUSES,
+} from '../models';
 
 type SocketIoContextType = {
   acceptChallenge: () => void;
@@ -10,6 +16,7 @@ type SocketIoContextType = {
   declineChallenge: () => void;
   emit: <T>(eventName: string, data: T) => void;
   onlineId: string;
+  challengeRequestStatus: ChallengeRequestStatus;
 };
 
 const socketActions = {
@@ -17,10 +24,20 @@ const socketActions = {
   joinRoom: 'join-room',
   leaveRoom: 'leave-room',
   challengeUser: 'challenge-user',
-  connect: 'connect',
   disconnect: 'disconnect',
+  challengeResponse: 'challenge-response',
+};
+
+const socketResponses = {
+  connect: 'connect',
   receiveChallenge: 'receive-challenge',
   challengeResponse: 'challenge-response',
+  challengeRejected: 'challenge-rejected',
+};
+
+const defaultRequestStatus: ChallengeRequestStatus = {
+  status: REQUEST_STATUSES.PENDING,
+  isSent: false,
 };
 
 export const MultiplayerContext = createContext<undefined | SocketIoContextType>(undefined);
@@ -28,12 +45,15 @@ export const MultiplayerContext = createContext<undefined | SocketIoContextType>
 export const MultiplayerProvider = ({ children }: { children: ReactNode }) => {
   const [onlineId, setOnlineId] = useState<string>('');
   const [challengerId, setChallengerId] = useState<ChallengerDataType['challengerId']>('');
+  const [challengeRequestStatus, setChallengeRequestStatus] =
+    useState<ChallengeRequestStatus>(defaultRequestStatus);
 
   const emit = <T,>(eventName: string, data: T) => {
     socket.emit(eventName, data);
   };
 
   const challengeUser = ({ challengerId, rivalId }: { challengerId: string; rivalId: string }) => {
+    setChallengeRequestStatus({ status: REQUEST_STATUSES.PENDING, isSent: true });
     emit(socketActions.challengeUser, { challengerId, rivalId });
   };
 
@@ -43,31 +63,39 @@ export const MultiplayerProvider = ({ children }: { children: ReactNode }) => {
 
   const declineChallenge = () => {
     //TODO: emit challenge response to server
-    emit(socketActions.challengeResponse, { ok: false, accept: false, message: 'Declined' });
+    emit(socketActions.challengeResponse, { userId: onlineId, accept: false, challengerId });
     resetChallengerData();
   };
 
   const acceptChallenge = () => {
     //TODO: emit challenge response to server
     emit(socketActions.challengeResponse, { ok: true, accept: true, message: 'Accepted' });
+    // Create a new room
+    // Join the room
+    // Navigate to the arena page
   };
 
   useEffect(() => {
     console.log('Connecting to socket.io', socket.id);
     if (socket.id) setOnlineId(socket.id);
 
-    socket.on(socketActions.connect, () => {
+    socket.on(socketResponses.connect, () => {
       console.log('Socket connected', socket.id);
       setOnlineId(socket.id || '');
     });
 
-    socket.on(socketActions.receiveChallenge, (data: ReceiveChallengeType) => {
+    socket.on(socketResponses.receiveChallenge, (data: ReceiveChallengeType) => {
       console.log('RECEIVE CHALLENGE', data);
       setChallengerId(data.challengerId);
     });
 
-    socket.on(socketActions.challengeResponse, (data: ChallengeResponseType) => {
+    socket.on(socketResponses.challengeResponse, (data: ChallengeResponseType) => {
       console.log('CHALLENGE RESPONSE', data);
+    });
+
+    socket.on(socketResponses.challengeRejected, (data: ChallengeResponseType) => {
+      console.log('CHALLENGE REJECTED', data);
+      setChallengeRequestStatus((prev) => ({ ...prev, status: REQUEST_STATUSES.REJECTED }));
     });
 
     return () => {
@@ -77,7 +105,15 @@ export const MultiplayerProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <MultiplayerContext.Provider
-      value={{ challengerId, onlineId, acceptChallenge, emit, challengeUser, declineChallenge }}
+      value={{
+        acceptChallenge,
+        challengeRequestStatus,
+        challengerId,
+        challengeUser,
+        declineChallenge,
+        emit,
+        onlineId,
+      }}
     >
       {children}
     </MultiplayerContext.Provider>

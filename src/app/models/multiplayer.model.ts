@@ -2,6 +2,8 @@ export interface ChallengeResponseType {
   ok: boolean;
   accept: boolean;
   message: string;
+  roomId?: string;
+  userId?: string;
 }
 
 export interface ReceiveChallengeType {
@@ -12,3 +14,16 @@ export interface ReceiveChallengeType {
 export type ChallengerDataType = {
   challengerId: string;
 };
+
+export const REQUEST_STATUSES = {
+  PENDING: 'pending',
+  ACCEPTED: 'accepted',
+  REJECTED: 'rejected',
+} as const;
+
+export interface ChallengeRequestStatus {
+  status: RequestStatusType;
+  isSent: boolean;
+}
+
+export type RequestStatusType = (typeof REQUEST_STATUSES)[keyof typeof REQUEST_STATUSES];

@@ -1,11 +1,19 @@
 'use client';
 import { useMultiplayerContext } from '@/app/hooks';
 import { useCopyClipboard } from '@/app/hooks/useCopyClipboard';
+import { REQUEST_STATUSES, RequestStatusType } from '@/app/models';
 import FindPlayerForm from '@/app/ui/components/find-player-form.component';
 import ReceiveChallengedModal from '@/app/ui/components/receive-challenge-modal.component';
 
+export const requestStatusMessages: Record<RequestStatusType, string> = {
+  [REQUEST_STATUSES.PENDING]: 'Waiting for opponent...',
+  [REQUEST_STATUSES.ACCEPTED]: 'Opponent accepted the challenge!',
+  [REQUEST_STATUSES.REJECTED]: 'Opponent rejected the challenge!',
+};
+
 export default function Page() {
-  const { challengerId, onlineId, declineChallenge, acceptChallenge } = useMultiplayerContext();
+  const { challengerId, onlineId, declineChallenge, acceptChallenge, challengeRequestStatus } =
+    useMultiplayerContext();
   const { isCopied, copyToClipboard } = useCopyClipboard();
 
   return (
@@ -21,6 +29,19 @@ export default function Page() {
           </button>
         </div>
         <FindPlayerForm />
+
+        {challengeRequestStatus.isSent && (
+          <>
+            <p>{requestStatusMessages[challengeRequestStatus.status]}</p>
+            <button
+              type="button"
+              className="max-w-[300px] p-2 text-black bg-white rounded-md"
+              disabled={challengeRequestStatus.status !== REQUEST_STATUSES.ACCEPTED}
+            >
+              Go to Battle
+            </button>
+          </>
+        )}
       </div>
       <ReceiveChallengedModal
         challenderId={challengerId}
