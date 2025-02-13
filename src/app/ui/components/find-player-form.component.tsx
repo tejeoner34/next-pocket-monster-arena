@@ -19,7 +19,6 @@ export default function FindPlayerForm() {
         className="p-2 w-full border border-gray-300 rounded-md text-black"
         onChange={(e) => setRivalId(e.target.value)}
       />
-      <p className="text-white">Error Message</p>
       <button
         type="submit"
         className="max-w-[300px] p-2 cursor-pointer text-black bg-white rounded-md"

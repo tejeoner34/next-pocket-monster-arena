@@ -9,6 +9,7 @@ export const requestStatusMessages: Record<RequestStatusType, string> = {
   [REQUEST_STATUSES.PENDING]: 'Waiting for opponent...',
   [REQUEST_STATUSES.ACCEPTED]: 'Opponent accepted the challenge!',
   [REQUEST_STATUSES.REJECTED]: 'Opponent rejected the challenge!',
+  [REQUEST_STATUSES.NO_USER]: 'No user found!',
 };
 
 export default function Page() {

@@ -33,6 +33,7 @@ const socketResponses = {
   receiveChallenge: 'receive-challenge',
   challengeResponse: 'challenge-response',
   challengeRejected: 'challenge-rejected',
+  noUserFound: 'no-user-found',
 };
 
 const defaultRequestStatus: ChallengeRequestStatus = {
@@ -91,6 +92,10 @@ export const MultiplayerProvider = ({ children }: { children: ReactNode }) => {
 
     socket.on(socketResponses.challengeResponse, (data: ChallengeResponseType) => {
       console.log('CHALLENGE RESPONSE', data);
+    });
+
+    socket.on(socketResponses.noUserFound, () => {
+      setChallengeRequestStatus((prev) => ({ ...prev, status: REQUEST_STATUSES.NO_USER }));
     });
 
     socket.on(socketResponses.challengeRejected, (data: ChallengeResponseType) => {

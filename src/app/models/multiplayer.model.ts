@@ -19,6 +19,7 @@ export const REQUEST_STATUSES = {
   PENDING: 'pending',
   ACCEPTED: 'accepted',
   REJECTED: 'rejected',
+  NO_USER: 'no-user',
 } as const;
 
 export interface ChallengeRequestStatus {
