@@ -1,39 +1,27 @@
 'use client';
 import { createContext, ReactNode, useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { socket } from '../api';
 import {
+  AcceptedChallengeResponseType,
   ChallengerDataType,
   ChallengeRequestStatus,
-  ChallengeResponseType,
+  OnlineArenaData,
   ReceiveChallengeType,
   REQUEST_STATUSES,
+  SOCKET_ACTIONS,
+  SOCKET_RESPONSES,
 } from '../models';
 
 type SocketIoContextType = {
   acceptChallenge: () => void;
+  challengeRequestStatus: ChallengeRequestStatus;
   challengerId: ChallengerDataType['challengerId'];
   challengeUser: ({ challengerId, rivalId }: { challengerId: string; rivalId: string }) => void;
   declineChallenge: () => void;
   emit: <T>(eventName: string, data: T) => void;
+  onlineArenaData: OnlineArenaData;
   onlineId: string;
-  challengeRequestStatus: ChallengeRequestStatus;
-};
-
-const socketActions = {
-  getUserId: 'get-user-id',
-  joinRoom: 'join-room',
-  leaveRoom: 'leave-room',
-  challengeUser: 'challenge-user',
-  disconnect: 'disconnect',
-  challengeResponse: 'challenge-response',
-};
-
-const socketResponses = {
-  connect: 'connect',
-  receiveChallenge: 'receive-challenge',
-  challengeResponse: 'challenge-response',
-  challengeRejected: 'challenge-rejected',
-  noUserFound: 'no-user-found',
 };
 
 const defaultRequestStatus: ChallengeRequestStatus = {
@@ -46,8 +34,10 @@ export const MultiplayerContext = createContext<undefined | SocketIoContextType>
 export const MultiplayerProvider = ({ children }: { children: ReactNode }) => {
   const [onlineId, setOnlineId] = useState<string>('');
   const [challengerId, setChallengerId] = useState<ChallengerDataType['challengerId']>('');
+  const [onlineArenaData, setOnlineArenaData] = useState<OnlineArenaData>({} as OnlineArenaData);
   const [challengeRequestStatus, setChallengeRequestStatus] =
     useState<ChallengeRequestStatus>(defaultRequestStatus);
+  const router = useRouter();
 
   const emit = <T,>(eventName: string, data: T) => {
     socket.emit(eventName, data);
@@ -55,7 +45,7 @@ export const MultiplayerProvider = ({ children }: { children: ReactNode }) => {
 
   const challengeUser = ({ challengerId, rivalId }: { challengerId: string; rivalId: string }) => {
     setChallengeRequestStatus({ status: REQUEST_STATUSES.PENDING, isSent: true });
-    emit(socketActions.challengeUser, { challengerId, rivalId });
+    emit(SOCKET_ACTIONS.challengeUser, { challengerId, rivalId });
   };
 
   const resetChallengerData = () => {
@@ -63,43 +53,35 @@ export const MultiplayerProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const declineChallenge = () => {
-    //TODO: emit challenge response to server
-    emit(socketActions.challengeResponse, { userId: onlineId, accept: false, challengerId });
+    emit(SOCKET_ACTIONS.challengeResponse, { userId: onlineId, accept: false, challengerId });
     resetChallengerData();
   };
 
   const acceptChallenge = () => {
-    //TODO: emit challenge response to server
-    emit(socketActions.challengeResponse, { ok: true, accept: true, message: 'Accepted' });
-    // Create a new room
-    // Join the room
-    // Navigate to the arena page
+    emit(SOCKET_ACTIONS.challengeResponse, { userId: onlineId, accept: true, challengerId });
   };
 
   useEffect(() => {
-    console.log('Connecting to socket.io', socket.id);
     if (socket.id) setOnlineId(socket.id);
 
-    socket.on(socketResponses.connect, () => {
-      console.log('Socket connected', socket.id);
+    socket.on(SOCKET_RESPONSES.connect, () => {
       setOnlineId(socket.id || '');
     });
 
-    socket.on(socketResponses.receiveChallenge, (data: ReceiveChallengeType) => {
-      console.log('RECEIVE CHALLENGE', data);
+    socket.on(SOCKET_RESPONSES.receiveChallenge, (data: ReceiveChallengeType) => {
       setChallengerId(data.challengerId);
     });
 
-    socket.on(socketResponses.challengeResponse, (data: ChallengeResponseType) => {
-      console.log('CHALLENGE RESPONSE', data);
+    socket.on(SOCKET_RESPONSES.challengeAccepted, (data: AcceptedChallengeResponseType) => {
+      router.push('/arena/multiplayer-arena');
+      setOnlineArenaData(data.room);
     });
 
-    socket.on(socketResponses.noUserFound, () => {
+    socket.on(SOCKET_RESPONSES.noUserFound, () => {
       setChallengeRequestStatus((prev) => ({ ...prev, status: REQUEST_STATUSES.NO_USER }));
     });
 
-    socket.on(socketResponses.challengeRejected, (data: ChallengeResponseType) => {
-      console.log('CHALLENGE REJECTED', data);
+    socket.on(SOCKET_RESPONSES.challengeRejected, () => {
       setChallengeRequestStatus((prev) => ({ ...prev, status: REQUEST_STATUSES.REJECTED }));
     });
 
@@ -117,6 +99,7 @@ export const MultiplayerProvider = ({ children }: { children: ReactNode }) => {
         challengeUser,
         declineChallenge,
         emit,
+        onlineArenaData,
         onlineId,
       }}
     >

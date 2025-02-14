@@ -1,35 +1,28 @@
 'use client';
 import { createContext, ReactNode, useContext, useState, useEffect } from 'react';
 import { usePokemon } from '../hooks';
-import { ArenaPokemon, arenaPokemonStatus, MoveDetail, Pokemon } from '../models/pokemon-model';
 import {
-  infoBoxMessageValues,
-  getMoveEffectivinesInfo,
   getMostEffectiveMove,
+  getMoveEffectivinesInfo,
   getRemainingHP,
+  infoBoxMessageValues,
   wait,
 } from '../lib';
+import {
+  ArenaData,
+  ArenaPokemon,
+  ArenaPokemonKeys,
+  arenaPokemonStatus,
+  ChosenMovesType,
+  MoveDetail,
+  Pokemon,
+} from '../models';
 
 type ArenaContextType = {
   arenaData: ArenaData;
   isLoading: boolean;
   setMove: (move: MoveDetail) => void;
   chosenMoves: ChosenMovesType;
-};
-
-export interface ArenaData {
-  myPokemon: ArenaPokemon;
-  rivalPokemon: ArenaPokemon;
-  isOver: boolean;
-  turnOrder: [ArenaPokemonKeys, ArenaPokemonKeys];
-  isTurnOver: boolean;
-  message: string;
-}
-
-export type ArenaPokemonKeys = 'myPokemon' | 'rivalPokemon';
-
-type ChosenMovesType = {
-  [key in ArenaPokemonKeys]: MoveDetail;
 };
 
 export const ArenaContext = createContext<ArenaContextType | undefined>(undefined);

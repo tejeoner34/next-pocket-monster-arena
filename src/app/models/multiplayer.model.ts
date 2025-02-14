@@ -1,9 +1,23 @@
+import { ArenaData } from './arena.model';
+
 export interface ChallengeResponseType {
   ok: boolean;
   accept: boolean;
   message: string;
   roomId?: string;
   userId?: string;
+}
+
+export interface AcceptedChallengeResponseType {
+  room: OnlineArenaData;
+}
+
+export interface OnlineArenaData extends ArenaData {
+  roomId: string;
+  users: string[];
+  usersMoves: [];
+  usersDoneWithTurn: [];
+  usersTurn: [];
 }
 
 export interface ReceiveChallengeType {
@@ -28,3 +42,21 @@ export interface ChallengeRequestStatus {
 }
 
 export type RequestStatusType = (typeof REQUEST_STATUSES)[keyof typeof REQUEST_STATUSES];
+
+export const SOCKET_ACTIONS = {
+  getUserId: 'get-user-id',
+  joinRoom: 'join-room',
+  leaveRoom: 'leave-room',
+  challengeUser: 'challenge-user',
+  disconnect: 'disconnect',
+  challengeResponse: 'challenge-response',
+};
+
+export const SOCKET_RESPONSES = {
+  connect: 'connect',
+  receiveChallenge: 'receive-challenge',
+  challengeResponse: 'challenge-response',
+  challengeRejected: 'challenge-rejected',
+  noUserFound: 'no-user-found',
+  challengeAccepted: 'challenge-accepted',
+};
