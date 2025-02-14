@@ -9,10 +9,10 @@ export interface ChallengeResponseType {
 }
 
 export interface AcceptedChallengeResponseType {
-  room: OnlineArenaData;
+  room: OnlineArenaDataType;
 }
 
-export interface OnlineArenaData extends ArenaData {
+export interface OnlineArenaDataType extends ArenaData {
   roomId: string;
   users: string[];
   usersMoves: [];

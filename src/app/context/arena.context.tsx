@@ -28,7 +28,7 @@ type ArenaContextType = {
 export const ArenaContext = createContext<ArenaContextType | undefined>(undefined);
 
 export function ArenaProvider({ children }: { children: ReactNode }) {
-  const { pokemons, isLoading } = usePokemon();
+  const { data: pokemons, isLoading } = usePokemon();
   const [arenaData, setArenaData] = useState<ArenaData>({} as ArenaData);
   const [chosenMoves, setChosenMove] = useState<ChosenMovesType>({} as ChosenMovesType);
 

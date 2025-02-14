@@ -6,7 +6,7 @@ import {
   AcceptedChallengeResponseType,
   ChallengerDataType,
   ChallengeRequestStatus,
-  OnlineArenaData,
+  OnlineArenaDataType,
   ReceiveChallengeType,
   REQUEST_STATUSES,
   SOCKET_ACTIONS,
@@ -20,8 +20,9 @@ type SocketIoContextType = {
   challengeUser: ({ challengerId, rivalId }: { challengerId: string; rivalId: string }) => void;
   declineChallenge: () => void;
   emit: <T>(eventName: string, data: T) => void;
-  onlineArenaData: OnlineArenaData;
+  onlineArenaData: OnlineArenaDataType;
   onlineId: string;
+  updateOnlineArenaData: (updates: Partial<OnlineArenaDataType>) => void;
 };
 
 const defaultRequestStatus: ChallengeRequestStatus = {
@@ -34,10 +35,19 @@ export const MultiplayerContext = createContext<undefined | SocketIoContextType>
 export const MultiplayerProvider = ({ children }: { children: ReactNode }) => {
   const [onlineId, setOnlineId] = useState<string>('');
   const [challengerId, setChallengerId] = useState<ChallengerDataType['challengerId']>('');
-  const [onlineArenaData, setOnlineArenaData] = useState<OnlineArenaData>({} as OnlineArenaData);
+  const [onlineArenaData, setOnlineArenaData] = useState<OnlineArenaDataType>(
+    {} as OnlineArenaDataType
+  );
   const [challengeRequestStatus, setChallengeRequestStatus] =
     useState<ChallengeRequestStatus>(defaultRequestStatus);
   const router = useRouter();
+
+  const updateOnlineArenaData = (updates: Partial<OnlineArenaDataType>) => {
+    setOnlineArenaData((prev) => ({
+      ...prev,
+      ...updates,
+    }));
+  };
 
   const emit = <T,>(eventName: string, data: T) => {
     socket.emit(eventName, data);
@@ -101,6 +111,7 @@ export const MultiplayerProvider = ({ children }: { children: ReactNode }) => {
         emit,
         onlineArenaData,
         onlineId,
+        updateOnlineArenaData,
       }}
     >
       {children}
