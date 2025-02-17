@@ -73,8 +73,10 @@ export const MultiplayerProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     if (socket.id) setOnlineId(socket.id);
+    console.log('SOCKET ID OUT OF CONECT', socket.id);
 
-    socket.on(SOCKET_RESPONSES.connect, () => {
+    socket.on('connect', () => {
+      console.log('IN CONNECT', socket.id);
       setOnlineId(socket.id || '');
     });
 
@@ -83,7 +85,8 @@ export const MultiplayerProvider = ({ children }: { children: ReactNode }) => {
     });
 
     socket.on(SOCKET_RESPONSES.challengeAccepted, (data: AcceptedChallengeResponseType) => {
-      router.push('/arena/multiplayer-arena');
+      console.log('CHALLENGE ACCEPTED', data.room);
+      router.push('/online-arena/arena');
       setOnlineArenaData(data.room);
     });
 

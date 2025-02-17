@@ -1,3 +1,4 @@
+'use client';
 import { createContext, useEffect } from 'react';
 import { useMultiplayerContext, usePokemon } from '../hooks';
 import { OnlineArenaDataType } from '../models';

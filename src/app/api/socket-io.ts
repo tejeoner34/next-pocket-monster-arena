@@ -1,5 +1,8 @@
 import { io } from 'socket.io-client';
 
-export const socket = io('http://localhost:5000', {
+// Take this to env variable
+const URL = 'http://localhost:3001';
+
+export const socket = io(URL, {
   transports: ['websocket'],
 });
