@@ -24,6 +24,7 @@ export interface OnlineArenaDataType {
   choseMoves: ChosenMovesType;
   isRoomComplete: boolean;
   battleFlow: BattleFlow;
+  isArenaReady: boolean;
 }
 
 export interface ReceiveChallengeType {
@@ -56,11 +57,12 @@ export const SOCKET_ACTIONS = {
   challengeUser: 'challenge-user',
   disconnect: 'disconnect',
   challengeResponse: 'challenge-response',
+  chooseMove: 'choose-move',
 };
 
 export const SOCKET_RESPONSES = {
   connect: 'connect',
-  receiveChallenge: 'receive-challenge',
+  receiveChallenge: 'received-challenge',
   challengeResponse: 'challenge-response',
   challengeRejected: 'challenge-rejected',
   noUserFound: 'no-user-found',

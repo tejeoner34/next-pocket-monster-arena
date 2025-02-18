@@ -5,12 +5,18 @@ import InfoBox from '@/app/ui/components/info-box.component';
 import PokemonInfo from '@/app/ui/components/pokemon-info.component';
 import RivalPokemonInfo from '@/app/ui/components/rival-pokemon-info.component';
 import ScreenPokeballPlaceholder from '@/app/ui/components/screen-pokeball-placeholder';
+import { redirect } from 'next/navigation';
 
 export default function Page() {
-  const { onlineArenaData, rivalId, onlineId } = useMultiplayerContext();
+  const { onlineArenaData, rivalId, onlineId, chooseMove } = useMultiplayerContext();
+
+  if (!rivalId) {
+    redirect('/online-arena/find-player');
+  }
+
   return (
     <>
-      <ScreenPokeballPlaceholder isOpen={!onlineArenaData.isRoomComplete} />
+      <ScreenPokeballPlaceholder isOpen={onlineArenaData.isArenaReady} />
 
       <div className="relative w-full overflow-hidden h-[540px] rounded bg-gradient-to-b from-[#242400] to-[#DDECE0]">
         <div>
@@ -24,7 +30,7 @@ export default function Page() {
             boxMessage={onlineArenaData.message}
             moves={onlineArenaData.pokemons[onlineId].arenaMoves}
             isTurnOver={onlineArenaData.isTurnOver}
-            onChoseMove={() => {}}
+            onChoseMove={chooseMove}
           />
           <div>
             <button

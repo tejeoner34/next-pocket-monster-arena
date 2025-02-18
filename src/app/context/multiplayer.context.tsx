@@ -6,6 +6,7 @@ import {
   AcceptedChallengeResponseType,
   ChallengerDataType,
   ChallengeRequestStatus,
+  MoveDetail,
   OnlineArenaDataType,
   ReceiveChallengeType,
   REQUEST_STATUSES,
@@ -16,14 +17,15 @@ import {
 type SocketIoContextType = {
   acceptChallenge: () => void;
   challengeRequestStatus: ChallengeRequestStatus;
-  rivalId: ChallengerDataType['challengerId'];
   challengeUser: ({ challengerId, rivalId }: { challengerId: string; rivalId: string }) => void;
+  chooseMove: (move: MoveDetail) => void;
   declineChallenge: () => void;
   emit: <T>(eventName: string, data: T) => void;
   onlineArenaData: OnlineArenaDataType;
   onlineId: string;
-  updateOnlineArenaData: (updates: Partial<OnlineArenaDataType>) => void;
   receivedChallenge: ReceiveChallengeType;
+  rivalId: ChallengerDataType['challengerId'];
+  updateOnlineArenaData: (updates: Partial<OnlineArenaDataType>) => void;
 };
 
 const defaultRequestStatus: ChallengeRequestStatus = {
@@ -77,6 +79,15 @@ export const MultiplayerProvider = ({ children }: { children: ReactNode }) => {
     emit(SOCKET_ACTIONS.challengeResponse, { userId: onlineId, accept: true, rivalId });
   };
 
+  const chooseMove = (move: MoveDetail) => {
+    console.log('MOVE', move);
+    emit(SOCKET_ACTIONS.chooseMove, {
+      userId: onlineId,
+      move,
+      roomId: onlineArenaData.roomId,
+    });
+  };
+
   useEffect(() => {
     if (socket.id) setOnlineId(socket.id);
     console.log('SOCKET ID OUT OF CONECT', socket.id);
@@ -115,14 +126,15 @@ export const MultiplayerProvider = ({ children }: { children: ReactNode }) => {
       value={{
         acceptChallenge,
         challengeRequestStatus,
-        rivalId,
         challengeUser,
+        chooseMove,
         declineChallenge,
         emit,
         onlineArenaData,
         onlineId,
-        updateOnlineArenaData,
         receivedChallenge,
+        rivalId,
+        updateOnlineArenaData,
       }}
     >
       {children}
