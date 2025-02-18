@@ -1,6 +1,6 @@
 'use client';
-import { createContext, useEffect } from 'react';
-import { useMultiplayerContext, usePokemon } from '../hooks';
+import { createContext } from 'react';
+import { useMultiplayerContext } from '../hooks';
 import { OnlineArenaDataType } from '../models';
 
 type OnlineArenaContextType = {
@@ -11,7 +11,6 @@ export const OnlineArenaContext = createContext<undefined | OnlineArenaContextTy
 
 export const OnlineArenaProvider = ({ children }: { children: React.ReactNode }) => {
   const { onlineArenaData, updateOnlineArenaData } = useMultiplayerContext();
-  const { data: pokemon } = usePokemon(1);
 
   const initateOnlineArena = (roomId: string) => {
     updateOnlineArenaData({

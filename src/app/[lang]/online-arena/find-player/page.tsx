@@ -13,7 +13,7 @@ export const requestStatusMessages: Record<RequestStatusType, string> = {
 };
 
 export default function Page() {
-  const { challengerId, onlineId, declineChallenge, acceptChallenge, challengeRequestStatus } =
+  const { receivedChallenge, onlineId, declineChallenge, acceptChallenge, challengeRequestStatus } =
     useMultiplayerContext();
   const { isCopied, copyToClipboard } = useCopyClipboard();
 
@@ -45,8 +45,8 @@ export default function Page() {
         )}
       </div>
       <ReceiveChallengedModal
-        challenderId={challengerId}
-        isOpen={!!challengerId}
+        challenderId={receivedChallenge.challengerId}
+        isOpen={!!receivedChallenge.challengerId}
         onAccept={acceptChallenge}
         onDecline={declineChallenge}
       />

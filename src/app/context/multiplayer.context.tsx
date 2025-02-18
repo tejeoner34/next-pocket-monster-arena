@@ -16,13 +16,14 @@ import {
 type SocketIoContextType = {
   acceptChallenge: () => void;
   challengeRequestStatus: ChallengeRequestStatus;
-  challengerId: ChallengerDataType['challengerId'];
+  rivalId: ChallengerDataType['challengerId'];
   challengeUser: ({ challengerId, rivalId }: { challengerId: string; rivalId: string }) => void;
   declineChallenge: () => void;
   emit: <T>(eventName: string, data: T) => void;
   onlineArenaData: OnlineArenaDataType;
   onlineId: string;
   updateOnlineArenaData: (updates: Partial<OnlineArenaDataType>) => void;
+  receivedChallenge: ReceiveChallengeType;
 };
 
 const defaultRequestStatus: ChallengeRequestStatus = {
@@ -34,7 +35,10 @@ export const MultiplayerContext = createContext<undefined | SocketIoContextType>
 
 export const MultiplayerProvider = ({ children }: { children: ReactNode }) => {
   const [onlineId, setOnlineId] = useState<string>('');
-  const [challengerId, setChallengerId] = useState<ChallengerDataType['challengerId']>('');
+  const [rivalId, setRivalId] = useState<ChallengerDataType['challengerId']>('');
+  const [receivedChallenge, setReceivedChallenge] = useState<ReceiveChallengeType>(
+    {} as ReceiveChallengeType
+  );
   const [onlineArenaData, setOnlineArenaData] = useState<OnlineArenaDataType>(
     {} as OnlineArenaDataType
   );
@@ -55,20 +59,22 @@ export const MultiplayerProvider = ({ children }: { children: ReactNode }) => {
 
   const challengeUser = ({ challengerId, rivalId }: { challengerId: string; rivalId: string }) => {
     setChallengeRequestStatus({ status: REQUEST_STATUSES.PENDING, isSent: true });
+    setRivalId(rivalId);
     emit(SOCKET_ACTIONS.challengeUser, { challengerId, rivalId });
   };
 
   const resetChallengerData = () => {
-    setChallengerId('');
+    setRivalId('');
   };
 
   const declineChallenge = () => {
-    emit(SOCKET_ACTIONS.challengeResponse, { userId: onlineId, accept: false, challengerId });
+    emit(SOCKET_ACTIONS.challengeResponse, { userId: onlineId, accept: false, rivalId });
     resetChallengerData();
   };
 
   const acceptChallenge = () => {
-    emit(SOCKET_ACTIONS.challengeResponse, { userId: onlineId, accept: true, challengerId });
+    console.log(onlineId, rivalId);
+    emit(SOCKET_ACTIONS.challengeResponse, { userId: onlineId, accept: true, rivalId });
   };
 
   useEffect(() => {
@@ -81,7 +87,8 @@ export const MultiplayerProvider = ({ children }: { children: ReactNode }) => {
     });
 
     socket.on(SOCKET_RESPONSES.receiveChallenge, (data: ReceiveChallengeType) => {
-      setChallengerId(data.challengerId);
+      setRivalId(data.challengerId);
+      setReceivedChallenge(data);
     });
 
     socket.on(SOCKET_RESPONSES.challengeAccepted, (data: AcceptedChallengeResponseType) => {
@@ -108,13 +115,14 @@ export const MultiplayerProvider = ({ children }: { children: ReactNode }) => {
       value={{
         acceptChallenge,
         challengeRequestStatus,
-        challengerId,
+        rivalId,
         challengeUser,
         declineChallenge,
         emit,
         onlineArenaData,
         onlineId,
         updateOnlineArenaData,
+        receivedChallenge,
       }}
     >
       {children}

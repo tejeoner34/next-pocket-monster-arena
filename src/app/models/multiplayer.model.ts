@@ -1,5 +1,5 @@
 import { ChosenMovesType } from './arena.model';
-import { Pokemon } from './pokemon-model';
+import { ArenaPokemon } from './pokemon-model';
 
 export interface ChallengeResponseType {
   ok: boolean;
@@ -16,15 +16,14 @@ export interface AcceptedChallengeResponseType {
 export interface OnlineArenaDataType {
   roomId: string;
   users: string[];
-  pokemons: {
-    pokemons: Record<string, Pokemon>;
-  };
+  pokemons: Record<string, ArenaPokemon>;
   isOver: boolean;
   turnOrder: [string, string];
   isTurnOver: boolean;
   message: string;
   choseMoves: ChosenMovesType;
   isRoomComplete: boolean;
+  battleFlow: BattleFlow;
 }
 
 export interface ReceiveChallengeType {
@@ -67,3 +66,12 @@ export const SOCKET_RESPONSES = {
   noUserFound: 'no-user-found',
   challengeAccepted: 'challenge-accepted',
 };
+
+export interface BattleStep {
+  action: string;
+  userId: string;
+  targetId?: string;
+  waitTime: number;
+}
+
+export type BattleFlow = BattleStep[];

@@ -5,9 +5,11 @@ import { useGameStyleMessage } from '@/app/hooks/useGameStyleMessage';
 type InfoBoxProps = {
   boxMessage: string;
   moves: ArenaMoves;
+  isTurnOver: boolean;
+  onChoseMove: (move: ArenaMoves[0]) => void;
 };
 
-export default function InfoBox({ boxMessage, moves }: InfoBoxProps) {
+export default function InfoBox({ boxMessage, moves, isTurnOver, onChoseMove }: InfoBoxProps) {
   const { typedMessage } = useGameStyleMessage(boxMessage);
   return (
     <div>
@@ -21,7 +23,7 @@ export default function InfoBox({ boxMessage, moves }: InfoBoxProps) {
             {typedMessage}
           </p>
         </div>
-        <InfoBoxMovesPad moves={moves} />
+        <InfoBoxMovesPad moves={moves} isTurnOver={isTurnOver} onChoseMove={onChoseMove} />
       </div>
     </div>
   );

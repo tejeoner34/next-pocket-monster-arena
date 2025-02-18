@@ -7,7 +7,7 @@ import RivalPokemonInfo from '@/app/ui/components/rival-pokemon-info.component';
 import ScreenPokeballPlaceholder from '@/app/ui/components/screen-pokeball-placeholder';
 
 export default function Page() {
-  const { arenaData, isLoading } = useArenaContext();
+  const { arenaData, isLoading, setMove } = useArenaContext();
 
   return (
     <>
@@ -22,7 +22,12 @@ export default function Page() {
             <div className="flex justify-around items-center w-full">
               <PokemonInfo pokemon={arenaData.myPokemon} />
             </div>
-            <InfoBox boxMessage={arenaData.message} moves={arenaData.myPokemon.arenaMoves} />
+            <InfoBox
+              boxMessage={arenaData.message}
+              moves={arenaData.myPokemon.arenaMoves}
+              isTurnOver={arenaData.isTurnOver}
+              onChoseMove={setMove}
+            />
             <div>
               <button
                 // onClick={() => setMovesContainerOpen(!movesContainerOpen)}
