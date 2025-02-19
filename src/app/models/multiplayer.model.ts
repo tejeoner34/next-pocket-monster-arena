@@ -9,12 +9,8 @@ export interface ChallengeResponseType {
   userId?: string;
 }
 
-export interface AcceptedChallengeResponseType {
-  room: OnlineArenaDataType;
-}
-
 export interface OnlineArenaDataType {
-  roomId: string;
+  id: string;
   users: string[];
   pokemons: Record<string, ArenaPokemon>;
   isOver: boolean;
@@ -58,6 +54,7 @@ export const SOCKET_ACTIONS = {
   disconnect: 'disconnect',
   challengeResponse: 'challenge-response',
   chooseMove: 'choose-move',
+  gameOver: 'game-over',
 };
 
 export const SOCKET_RESPONSES = {
@@ -67,13 +64,18 @@ export const SOCKET_RESPONSES = {
   challengeRejected: 'challenge-rejected',
   noUserFound: 'no-user-found',
   challengeAccepted: 'challenge-accepted',
+  newTurn: 'new-turn',
+  gameOver: 'game-over',
 };
 
 export interface BattleStep {
-  action: string;
+  action: BattleFlowAction;
   userId: string;
   targetId?: string;
   waitTime: number;
+  isGameOver?: boolean;
 }
 
 export type BattleFlow = BattleStep[];
+
+export type BattleFlowAction = 'attack' | 'receiveDamage' | 'updateHealthBar';

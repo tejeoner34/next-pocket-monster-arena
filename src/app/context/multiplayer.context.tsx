@@ -3,7 +3,7 @@ import { createContext, ReactNode, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { socket } from '../api';
 import {
-  AcceptedChallengeResponseType,
+  BattleFlow,
   ChallengerDataType,
   ChallengeRequestStatus,
   MoveDetail,
@@ -13,6 +13,7 @@ import {
   SOCKET_ACTIONS,
   SOCKET_RESPONSES,
 } from '../models';
+import { wait } from '../lib';
 
 type SocketIoContextType = {
   acceptChallenge: () => void;
@@ -75,25 +76,85 @@ export const MultiplayerProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const acceptChallenge = () => {
-    console.log(onlineId, rivalId);
     emit(SOCKET_ACTIONS.challengeResponse, { userId: onlineId, accept: true, rivalId });
   };
 
   const chooseMove = (move: MoveDetail) => {
-    console.log('MOVE', move);
     emit(SOCKET_ACTIONS.chooseMove, {
       userId: onlineId,
-      move,
-      roomId: onlineArenaData.roomId,
+      chosenMove: move,
+      roomId: onlineArenaData.id,
     });
+  };
+
+  const attack = (attacker: string) => {
+    setOnlineArenaData((prev) => ({
+      ...prev,
+      pokemons: {
+        ...prev.pokemons,
+        [attacker]: {
+          ...prev.pokemons[attacker],
+          status: 'attacking',
+        },
+      },
+    }));
+  };
+
+  const receiveDamage = (receiver: string) => {
+    setOnlineArenaData((prev) => ({
+      ...prev,
+      pokemons: {
+        ...prev.pokemons,
+        [receiver]: {
+          ...prev.pokemons[receiver],
+          status: 'stunned',
+        },
+      },
+    }));
+  };
+
+  const updateHealthBar = (receiver: string, newData: OnlineArenaDataType) => {
+    setOnlineArenaData((prev) => ({
+      ...prev,
+      pokemons: {
+        ...prev.pokemons,
+        [receiver]: {
+          ...prev.pokemons[receiver],
+          currentHealth: newData.pokemons[receiver].currentHealth,
+          currentPercentageHealth: newData.pokemons[receiver].currentPercentageHealth,
+        },
+      },
+    }));
+  };
+
+  const gameLoop = async (data: OnlineArenaDataType) => {
+    const { battleFlow } = data;
+    for (const { action, userId, waitTime, isGameOver } of battleFlow) {
+      switch (action) {
+        case 'attack':
+          attack(userId);
+          break;
+        case 'receiveDamage':
+          receiveDamage(userId);
+          break;
+        case 'updateHealthBar':
+          updateHealthBar(userId, data);
+          break;
+        default:
+          break;
+      }
+      if (isGameOver) {
+        emit(SOCKET_ACTIONS.gameOver, { userId, roomId: data.id });
+        break;
+      }
+      await wait(waitTime);
+    }
   };
 
   useEffect(() => {
     if (socket.id) setOnlineId(socket.id);
-    console.log('SOCKET ID OUT OF CONECT', socket.id);
 
     socket.on('connect', () => {
-      console.log('IN CONNECT', socket.id);
       setOnlineId(socket.id || '');
     });
 
@@ -102,10 +163,9 @@ export const MultiplayerProvider = ({ children }: { children: ReactNode }) => {
       setReceivedChallenge(data);
     });
 
-    socket.on(SOCKET_RESPONSES.challengeAccepted, (data: AcceptedChallengeResponseType) => {
-      console.log('CHALLENGE ACCEPTED', data.room);
+    socket.on(SOCKET_RESPONSES.challengeAccepted, (data: OnlineArenaDataType) => {
       router.push('/online-arena/arena');
-      setOnlineArenaData(data.room);
+      setOnlineArenaData(data);
     });
 
     socket.on(SOCKET_RESPONSES.noUserFound, () => {
@@ -114,6 +174,17 @@ export const MultiplayerProvider = ({ children }: { children: ReactNode }) => {
 
     socket.on(SOCKET_RESPONSES.challengeRejected, () => {
       setChallengeRequestStatus((prev) => ({ ...prev, status: REQUEST_STATUSES.REJECTED }));
+    });
+
+    socket.on(SOCKET_RESPONSES.newTurn, async (data: OnlineArenaDataType) => {
+      gameLoop(data);
+    });
+
+    socket.on(SOCKET_RESPONSES.gameOver, () => {
+      setOnlineArenaData((prev) => ({
+        ...prev,
+        isOver: true,
+      }));
     });
 
     return () => {
