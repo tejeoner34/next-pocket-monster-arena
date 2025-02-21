@@ -49,7 +49,6 @@ export function useMovesGamePad(
     setSelectedRow(rowIndex);
     setSelectedCol(colIndex);
     const selectedMove = movesMatrix[rowIndex][colIndex];
-    console.log(`Selected move: ${selectedMove.name}`);
     setMove(selectedMove);
   };
   return {

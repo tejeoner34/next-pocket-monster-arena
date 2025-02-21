@@ -8,7 +8,8 @@ import ScreenPokeballPlaceholder from '@/app/ui/components/screen-pokeball-place
 import { redirect } from 'next/navigation';
 
 export default function Page() {
-  const { onlineArenaData, rivalId, onlineId, chooseMove } = useMultiplayerContext();
+  const { onlineArenaData, rivalId, onlineId, chooseMove, infoBoxMessage } =
+    useMultiplayerContext();
 
   if (!rivalId) {
     redirect('/online-arena/find-player');
@@ -27,7 +28,7 @@ export default function Page() {
             <PokemonInfo pokemon={onlineArenaData.pokemons[onlineId]} />
           </div>
           <InfoBox
-            boxMessage={onlineArenaData.message}
+            boxMessage={infoBoxMessage}
             moves={onlineArenaData.pokemons[onlineId].arenaMoves}
             isTurnOver={onlineArenaData.isTurnOver}
             onChoseMove={chooseMove}

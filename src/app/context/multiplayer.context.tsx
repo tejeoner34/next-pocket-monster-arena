@@ -3,7 +3,6 @@ import { createContext, ReactNode, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { socket } from '../api';
 import {
-  BattleFlow,
   ChallengerDataType,
   ChallengeRequestStatus,
   MoveDetail,
@@ -14,6 +13,7 @@ import {
   SOCKET_RESPONSES,
 } from '../models';
 import { wait } from '../lib';
+import { useInfoBoxMessage } from '../hooks/useInfoBoxMessage';
 
 type SocketIoContextType = {
   acceptChallenge: () => void;
@@ -22,6 +22,7 @@ type SocketIoContextType = {
   chooseMove: (move: MoveDetail) => void;
   declineChallenge: () => void;
   emit: <T>(eventName: string, data: T) => void;
+  infoBoxMessage: string;
   onlineArenaData: OnlineArenaDataType;
   onlineId: string;
   receivedChallenge: ReceiveChallengeType;
@@ -47,6 +48,7 @@ export const MultiplayerProvider = ({ children }: { children: ReactNode }) => {
   );
   const [challengeRequestStatus, setChallengeRequestStatus] =
     useState<ChallengeRequestStatus>(defaultRequestStatus);
+  const { infoBoxMessage, setInfoBoxMessage } = useInfoBoxMessage();
   const router = useRouter();
 
   const updateOnlineArenaData = (updates: Partial<OnlineArenaDataType>) => {
@@ -80,6 +82,10 @@ export const MultiplayerProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const chooseMove = (move: MoveDetail) => {
+    setOnlineArenaData((prev) => ({
+      ...prev,
+      isTurnOver: false,
+    }));
     emit(SOCKET_ACTIONS.chooseMove, {
       userId: onlineId,
       chosenMove: move,
@@ -149,6 +155,10 @@ export const MultiplayerProvider = ({ children }: { children: ReactNode }) => {
       }
       await wait(waitTime);
     }
+    setOnlineArenaData((prev) => ({
+      ...prev,
+      isTurnOver: true,
+    }));
   };
 
   useEffect(() => {
@@ -166,6 +176,10 @@ export const MultiplayerProvider = ({ children }: { children: ReactNode }) => {
     socket.on(SOCKET_RESPONSES.challengeAccepted, (data: OnlineArenaDataType) => {
       router.push('/online-arena/arena');
       setOnlineArenaData(data);
+      setInfoBoxMessage({
+        type: 'default',
+        pokemonName: data.pokemons[socket.id!].name,
+      });
     });
 
     socket.on(SOCKET_RESPONSES.noUserFound, () => {
@@ -201,6 +215,7 @@ export const MultiplayerProvider = ({ children }: { children: ReactNode }) => {
         chooseMove,
         declineChallenge,
         emit,
+        infoBoxMessage,
         onlineArenaData,
         onlineId,
         receivedChallenge,
