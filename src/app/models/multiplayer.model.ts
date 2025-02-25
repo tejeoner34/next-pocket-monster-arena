@@ -49,12 +49,12 @@ export type RequestStatusType = (typeof REQUEST_STATUSES)[keyof typeof REQUEST_S
 export const SOCKET_ACTIONS = {
   getUserId: 'get-user-id',
   joinRoom: 'join-room',
-  leaveRoom: 'leave-room',
   challengeUser: 'challenge-user',
   disconnect: 'disconnect',
   challengeResponse: 'challenge-response',
   chooseMove: 'choose-move',
   gameOver: 'game-over',
+  leavesRoom: 'leaves-room',
 };
 
 export const SOCKET_RESPONSES = {
@@ -66,6 +66,8 @@ export const SOCKET_RESPONSES = {
   challengeAccepted: 'challenge-accepted',
   newTurn: 'new-turn',
   gameOver: 'game-over',
+  userDisconnected: 'user-disconnected',
+  leavesRoom: 'leaves-room',
 };
 
 export interface BattleStep {

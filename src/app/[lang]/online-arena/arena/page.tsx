@@ -1,15 +1,23 @@
 'use client';
+import { useCallback } from 'react';
+import { redirect } from 'next/navigation';
 import { useMultiplayerContext } from '@/app/hooks';
 import GameOverModal from '@/app/ui/components/game-over-modal.component';
 import InfoBox from '@/app/ui/components/info-box.component';
 import PokemonInfo from '@/app/ui/components/pokemon-info.component';
 import RivalPokemonInfo from '@/app/ui/components/rival-pokemon-info.component';
 import ScreenPokeballPlaceholder from '@/app/ui/components/screen-pokeball-placeholder';
-import { redirect } from 'next/navigation';
+import useOnLeavePage from '@/app/hooks/useOnLeavePage';
 
 export default function Page() {
-  const { onlineArenaData, rivalId, onlineId, chooseMove, infoBoxMessage } =
+  const { onlineArenaData, rivalId, onlineId, chooseMove, infoBoxMessage, leaveArena } =
     useMultiplayerContext();
+
+  const handleLeave = useCallback(() => {
+    leaveArena();
+  }, [leaveArena]);
+
+  useOnLeavePage(handleLeave);
 
   if (!rivalId) {
     redirect('/online-arena/find-player');

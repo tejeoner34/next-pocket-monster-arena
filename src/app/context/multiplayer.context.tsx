@@ -25,6 +25,7 @@ type SocketIoContextType = {
   declineChallenge: () => void;
   emit: <T>(eventName: string, data: T) => void;
   infoBoxMessage: string;
+  leaveArena: () => void;
   onlineArenaData: OnlineArenaDataType;
   onlineId: string;
   receivedChallenge: ReceiveChallengeType;
@@ -82,6 +83,10 @@ export const MultiplayerProvider = ({ children }: { children: ReactNode }) => {
   const acceptChallenge = () => {
     setChallengeRequestStatus({ status: REQUEST_STATUSES.ACCEPTED, isSent: true });
     emit(SOCKET_ACTIONS.challengeResponse, { userId: onlineId, accept: true, rivalId });
+  };
+
+  const leaveArena = () => {
+    emit(SOCKET_ACTIONS.leavesRoom, { userId: onlineId, roomId: onlineArenaData.id });
   };
 
   const chooseMove = (move: MoveDetail) => {
@@ -205,6 +210,10 @@ export const MultiplayerProvider = ({ children }: { children: ReactNode }) => {
       }));
     });
 
+    socket.on(SOCKET_RESPONSES.userDisconnected, () => {
+      alert('Rival disconnected');
+    });
+
     return () => {
       socket.disconnect();
     };
@@ -220,6 +229,7 @@ export const MultiplayerProvider = ({ children }: { children: ReactNode }) => {
         declineChallenge,
         emit,
         infoBoxMessage,
+        leaveArena,
         onlineArenaData,
         onlineId,
         receivedChallenge,
