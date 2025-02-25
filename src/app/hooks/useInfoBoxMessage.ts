@@ -1,13 +1,13 @@
 import { useState } from 'react';
+import { DamageLabel } from '../models/pokemon-model';
 
 export type InfoBoxMessageType =
   | 'default'
   | 'attack'
-  | 'superEffective'
-  | 'notEffective'
   | 'missed'
   | 'waitingForRival'
-  | 'gameOver';
+  | 'gameOver'
+  | DamageLabel;
 
 const getInfoBoxMessage = (
   messageType: InfoBoxMessageType,
@@ -17,8 +17,8 @@ const getInfoBoxMessage = (
   const messages: Record<InfoBoxMessageType, string> = {
     default: `What will ${pokemonName} do`,
     attack: `${pokemonName} used ${moveName}`,
-    superEffective: 'Its super effective',
-    notEffective: 'Its not very effective',
+    'super-effective': 'Its super effective',
+    'not-effective': 'Its not very effective',
     missed: 'It missed',
     waitingForRival: 'Waiting for rival',
     gameOver: `${pokemonName} has been defeated`,

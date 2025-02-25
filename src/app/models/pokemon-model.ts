@@ -85,6 +85,13 @@ export interface MoveDetail {
   type: Type;
 }
 
+export interface DamageInfo {
+  label: DamageLabel;
+  value: number;
+}
+
+export type DamageLabel = 'super-effective' | 'not-effective';
+
 export interface Type {
   name: PokemonType;
   url: string;

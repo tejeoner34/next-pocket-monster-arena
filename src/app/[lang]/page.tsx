@@ -32,7 +32,7 @@ export default async function Home({ params: { lang } }: { params: { lang: strin
             <h2 className="text-lg font-medium mb-2 text-textTertiary">{home.playMultiplayer}</h2>
             <div className="flex space-x-4">
               <Link
-                href="/multiplayer-arena"
+                href="/online-arena/find-player"
                 className="bg-buttonTertiary font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
               >
                 {home.multiplayer}

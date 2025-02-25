@@ -3,6 +3,7 @@ import { createContext, ReactNode, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { socket } from '../api';
 import {
+  ArenaPokemon,
   ChallengerDataType,
   ChallengeRequestStatus,
   MoveDetail,
@@ -96,11 +97,15 @@ export const MultiplayerProvider = ({ children }: { children: ReactNode }) => {
     });
   };
 
-  const attack = (data: OnlineArenaDataType, attacker: string) => {
+  const attack = (
+    pokemonName: ArenaPokemon['name'],
+    moveName: MoveDetail['name'],
+    attacker: string
+  ) => {
     setInfoBoxMessage({
       type: 'attack',
-      pokemonName: data.pokemons[attacker].name,
-      moveName: data.choseMoves[attacker].name,
+      pokemonName,
+      moveName,
     });
     setOnlineArenaData((prev) => updatePokemonStatus('attacking', attacker, prev));
   };
@@ -120,10 +125,18 @@ export const MultiplayerProvider = ({ children }: { children: ReactNode }) => {
 
   const gameLoop = async (data: OnlineArenaDataType) => {
     const { battleFlow } = data;
-    for (const { action, userId, waitTime, isGameOver } of battleFlow) {
+    for (const {
+      action,
+      userId,
+      waitTime,
+      isGameOver,
+      moveName,
+      pokemonName,
+      effectivinessInfo,
+    } of battleFlow) {
       switch (action) {
         case 'attack':
-          attack(data, userId);
+          attack(pokemonName, moveName, userId);
           break;
         case 'receiveDamage':
           receiveDamage(userId);
@@ -137,6 +150,12 @@ export const MultiplayerProvider = ({ children }: { children: ReactNode }) => {
       if (isGameOver) {
         gameOver(data, userId);
         break;
+      }
+      if (effectivinessInfo) {
+        await wait(waitTime);
+        setInfoBoxMessage({
+          type: effectivinessInfo.label,
+        });
       }
       await wait(waitTime);
     }

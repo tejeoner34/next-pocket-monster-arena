@@ -1,4 +1,4 @@
-import { ArenaPokemon, MoveDetail } from './pokemon-model';
+import { ArenaPokemon, DamageInfo, MoveDetail } from './pokemon-model';
 
 export interface ChallengeResponseType {
   ok: boolean;
@@ -74,6 +74,9 @@ export interface BattleStep {
   targetId?: string;
   waitTime: number;
   isGameOver?: boolean;
+  pokemonName: ArenaPokemon['name'];
+  moveName: MoveDetail['name'];
+  effectivinessInfo?: DamageInfo;
 }
 
 export type BattleFlow = BattleStep[];
