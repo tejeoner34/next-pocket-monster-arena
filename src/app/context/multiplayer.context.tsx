@@ -14,6 +14,7 @@ import {
 } from '../models';
 import { wait } from '../lib';
 import { useInfoBoxMessage } from '../hooks/useInfoBoxMessage';
+import { updatePokemonHealth, updatePokemonStatus } from '../lib/online-arena.utils';
 
 type SocketIoContextType = {
   acceptChallenge: () => void;
@@ -86,6 +87,7 @@ export const MultiplayerProvider = ({ children }: { children: ReactNode }) => {
       ...prev,
       isTurnOver: false,
     }));
+    setInfoBoxMessage({ type: 'waitingForRival' });
     emit(SOCKET_ACTIONS.chooseMove, {
       userId: onlineId,
       chosenMove: move,
@@ -93,44 +95,26 @@ export const MultiplayerProvider = ({ children }: { children: ReactNode }) => {
     });
   };
 
-  const attack = (attacker: string) => {
-    setOnlineArenaData((prev) => ({
-      ...prev,
-      pokemons: {
-        ...prev.pokemons,
-        [attacker]: {
-          ...prev.pokemons[attacker],
-          status: 'attacking',
-        },
-      },
-    }));
+  const attack = (data: OnlineArenaDataType, attacker: string) => {
+    setInfoBoxMessage({
+      type: 'attack',
+      pokemonName: data.pokemons[attacker].name,
+      moveName: data.choseMoves[attacker].name,
+    });
+    setOnlineArenaData((prev) => updatePokemonStatus('attacking', attacker, prev));
   };
 
   const receiveDamage = (receiver: string) => {
-    setOnlineArenaData((prev) => ({
-      ...prev,
-      pokemons: {
-        ...prev.pokemons,
-        [receiver]: {
-          ...prev.pokemons[receiver],
-          status: 'stunned',
-        },
-      },
-    }));
+    setOnlineArenaData((prev) => updatePokemonStatus('stunned', receiver, prev));
   };
 
   const updateHealthBar = (receiver: string, newData: OnlineArenaDataType) => {
-    setOnlineArenaData((prev) => ({
-      ...prev,
-      pokemons: {
-        ...prev.pokemons,
-        [receiver]: {
-          ...prev.pokemons[receiver],
-          currentHealth: newData.pokemons[receiver].currentHealth,
-          currentPercentageHealth: newData.pokemons[receiver].currentPercentageHealth,
-        },
-      },
-    }));
+    setOnlineArenaData((prev) => updatePokemonHealth(prev, newData, receiver));
+  };
+
+  const gameOver = (data: OnlineArenaDataType, userId: string) => {
+    emit(SOCKET_ACTIONS.gameOver, { userId, roomId: data.id });
+    setInfoBoxMessage({ type: 'gameOver', pokemonName: data.pokemons[userId].name });
   };
 
   const gameLoop = async (data: OnlineArenaDataType) => {
@@ -138,7 +122,7 @@ export const MultiplayerProvider = ({ children }: { children: ReactNode }) => {
     for (const { action, userId, waitTime, isGameOver } of battleFlow) {
       switch (action) {
         case 'attack':
-          attack(userId);
+          attack(data, userId);
           break;
         case 'receiveDamage':
           receiveDamage(userId);
@@ -150,7 +134,7 @@ export const MultiplayerProvider = ({ children }: { children: ReactNode }) => {
           break;
       }
       if (isGameOver) {
-        emit(SOCKET_ACTIONS.gameOver, { userId, roomId: data.id });
+        gameOver(data, userId);
         break;
       }
       await wait(waitTime);

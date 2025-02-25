@@ -5,7 +5,9 @@ export type InfoBoxMessageType =
   | 'attack'
   | 'superEffective'
   | 'notEffective'
-  | 'missed';
+  | 'missed'
+  | 'waitingForRival'
+  | 'gameOver';
 
 const getInfoBoxMessage = (
   messageType: InfoBoxMessageType,
@@ -15,9 +17,11 @@ const getInfoBoxMessage = (
   const messages: Record<InfoBoxMessageType, string> = {
     default: `What will ${pokemonName} do`,
     attack: `${pokemonName} used ${moveName}`,
-    superEffective: 'its super effective',
-    notEffective: 'its not very effective',
-    missed: 'it missed',
+    superEffective: 'Its super effective',
+    notEffective: 'Its not very effective',
+    missed: 'It missed',
+    waitingForRival: 'Waiting for rival',
+    gameOver: `${pokemonName} has been defeated`,
   };
   return messages[messageType];
 };

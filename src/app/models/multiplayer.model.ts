@@ -1,5 +1,4 @@
-import { ChosenMovesType } from './arena.model';
-import { ArenaPokemon } from './pokemon-model';
+import { ArenaPokemon, MoveDetail } from './pokemon-model';
 
 export interface ChallengeResponseType {
   ok: boolean;
@@ -17,7 +16,7 @@ export interface OnlineArenaDataType {
   turnOrder: [string, string];
   isTurnOver: boolean;
   message: string;
-  choseMoves: ChosenMovesType;
+  choseMoves: Record<string, MoveDetail>;
   isRoomComplete: boolean;
   battleFlow: BattleFlow;
   isArenaReady: boolean;
