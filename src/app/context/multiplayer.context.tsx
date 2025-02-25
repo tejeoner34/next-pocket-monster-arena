@@ -32,7 +32,7 @@ type SocketIoContextType = {
 };
 
 const defaultRequestStatus: ChallengeRequestStatus = {
-  status: REQUEST_STATUSES.PENDING,
+  status: REQUEST_STATUSES.NOT_SENT,
   isSent: false,
 };
 
@@ -79,6 +79,7 @@ export const MultiplayerProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const acceptChallenge = () => {
+    setChallengeRequestStatus({ status: REQUEST_STATUSES.ACCEPTED, isSent: true });
     emit(SOCKET_ACTIONS.challengeResponse, { userId: onlineId, accept: true, rivalId });
   };
 

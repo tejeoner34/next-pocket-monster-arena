@@ -36,6 +36,7 @@ export const REQUEST_STATUSES = {
   ACCEPTED: 'accepted',
   REJECTED: 'rejected',
   NO_USER: 'no-user',
+  NOT_SENT: 'not-sent',
 } as const;
 
 export interface ChallengeRequestStatus {

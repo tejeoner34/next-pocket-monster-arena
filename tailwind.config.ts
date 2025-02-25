@@ -31,6 +31,7 @@ export default {
         'rival-attack': 'rival-attack 0.2s ease-in-out',
         defeat: 'defeat 1s forwards',
         stunned: 'stunned 0.5s 0.3s forwards',
+        spinner: 'spinner 2s infinite linear',
       },
       keyframes: {
         attack: {
@@ -52,6 +53,13 @@ export default {
           '25%': { opacity: '1' },
           '50%': { opacity: '0' },
           '100%': { opacity: '1' },
+        },
+        spinner: {
+          '0%': { transform: 'rotate(0deg)' },
+          '25%': { transform: 'rotate(50deg)' },
+          '50%': { transform: 'rotate(-50deg)' },
+          '75%': { transform: 'rotate(0deg)' },
+          '100%': { transform: 'rotate(0deg)' },
         },
       },
     },

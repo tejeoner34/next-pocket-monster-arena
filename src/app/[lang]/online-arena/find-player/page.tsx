@@ -3,6 +3,7 @@ import { useMultiplayerContext } from '@/app/hooks';
 import { useCopyClipboard } from '@/app/hooks/useCopyClipboard';
 import { REQUEST_STATUSES, RequestStatusType } from '@/app/models';
 import FindPlayerForm from '@/app/ui/components/find-player-form.component';
+import PokeballSpinner from '@/app/ui/components/pokeball-spinner.component';
 import ReceiveChallengedModal from '@/app/ui/components/receive-challenge-modal.component';
 
 export const requestStatusMessages: Record<RequestStatusType, string> = {
@@ -10,12 +11,16 @@ export const requestStatusMessages: Record<RequestStatusType, string> = {
   [REQUEST_STATUSES.ACCEPTED]: 'Opponent accepted the challenge!',
   [REQUEST_STATUSES.REJECTED]: 'Opponent rejected the challenge!',
   [REQUEST_STATUSES.NO_USER]: 'No user found!',
+  [REQUEST_STATUSES.NOT_SENT]: '',
 };
 
 export default function Page() {
   const { receivedChallenge, onlineId, declineChallenge, acceptChallenge, challengeRequestStatus } =
     useMultiplayerContext();
   const { isCopied, copyToClipboard } = useCopyClipboard();
+  const showSpinner =
+    challengeRequestStatus.status === REQUEST_STATUSES.PENDING ||
+    challengeRequestStatus.status === REQUEST_STATUSES.ACCEPTED;
 
   return (
     <div className="w-full h-full flex justify-center pt-2.5">
@@ -50,6 +55,7 @@ export default function Page() {
         onAccept={acceptChallenge}
         onDecline={declineChallenge}
       />
+      {showSpinner && <PokeballSpinner />}
     </div>
   );
 }
