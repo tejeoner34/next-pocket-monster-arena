@@ -1,30 +1,28 @@
 'use client';
 import { Theme, themes, useTheme } from '@/app/context/theme-context';
+import { useTranslations } from 'next-intl';
 import React from 'react';
 
-export default function ThemeButtons({
-  translations,
-}: {
-  translations: { [key: string]: string };
-}) {
+export default function ThemeButtons() {
+  const t = useTranslations('home');
   const { toggleTheme } = useTheme();
 
   const buttons = [
     {
       id: themes.dark,
-      label: translations.dark,
+      label: t('dark'),
       color: 'buttonTertiary',
     },
     {
       id: themes.light,
-      label: translations.light,
+      label: t('light'),
       color: 'buttonQuaternary',
     },
   ];
 
   return (
     <div className="mb-6">
-      <h2 className="text-lg font-medium mb-2 text-textTertiary">{translations.chooseTheme}</h2>
+      <h2 className="text-lg font-medium mb-2 text-textTertiary">{t('chooseTheme')}</h2>
       <div className="flex space-x-4">
         {buttons.map((button) => (
           <button

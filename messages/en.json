@@ -1,0 +1,12 @@
+{
+    "home": {
+        "chooseLanguage": "Choose a language",
+        "chooseTheme": "Choose theme",
+        "playMultiplayer": "Play Multiplayer",
+        "english": "English",
+        "japanese": "Japanese",
+        "dark": "Dark",
+        "light": "Light",
+        "multiplayer": "Multiplayer"
+    }
+}
