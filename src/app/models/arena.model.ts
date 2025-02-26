@@ -6,8 +6,13 @@ export interface ArenaData {
   isOver: boolean;
   turnOrder: [ArenaPokemonKeys, ArenaPokemonKeys];
   isTurnOver: boolean;
-  message: string;
+  message: MessageIntl;
 }
+
+export type MessageIntl = {
+  key: string;
+  params: Record<string, string>;
+};
 
 export type ArenaPokemonKeys = 'myPokemon' | 'rivalPokemon';
 

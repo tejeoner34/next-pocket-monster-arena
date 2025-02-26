@@ -21,7 +21,7 @@ export default function InfoBoxMovesPad({ moves, isTurnOver, onChoseMove }: Info
           return (
             <button
               key={colIndex}
-              className={`relative w-[45%] rounded-lg flex items-center cursor-pointer p-2 m-1 ${
+              className={`relative w-[45%] rounded-lg flex items-center p-2 m-1 text-left ${
                 isSelected ? 'selected' : ''
               }`}
               onClick={() => handleClick(rowIndex, colIndex)}

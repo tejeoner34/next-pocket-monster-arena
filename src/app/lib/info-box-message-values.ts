@@ -1,5 +1,10 @@
 export const infoBoxMessageValues = {
-  default: 'Choose a move to attack',
-  getAttackerPlusMoveName: (pokemonName: string, moveName: string) =>
-    `${pokemonName} used ${moveName}!`,
+  default: (pokemonName: string) => ({
+    key: 'default',
+    params: { pokemonName },
+  }),
+  getAttackerPlusMoveName: (pokemonName: string, moveName: string) => ({
+    key: 'attackerPlusMove',
+    params: { pokemonName, moveName },
+  }),
 };

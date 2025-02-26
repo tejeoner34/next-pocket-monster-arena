@@ -7,6 +7,19 @@
         "japanese": "Japanese",
         "dark": "Dark",
         "light": "Light",
-        "multiplayer": "Multiplayer"
+        "multiplayer": "Multiplayer",
+        "playerVsCpu": "Player vs CPU",
+        "play": "Play"
+    },
+    "gameOverModal": {
+        "title": "Game Over",
+        "playAgain": "Play Again",
+        "exit": "Exit"
+    },
+    "arena": {
+        "infoBox": {
+            "attackerPlusMove": "{pokemonName} used {moveName}!",
+            "default": "What will {pokemonName} do?"
+        }
     }
 }

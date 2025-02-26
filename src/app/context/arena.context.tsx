@@ -73,7 +73,7 @@ export function ArenaProvider({ children }: { children: ReactNode }) {
         isOver: false,
         turnOrder: ['myPokemon', 'rivalPokemon'],
         isTurnOver: true,
-        message: infoBoxMessageValues.default,
+        message: infoBoxMessageValues.default(myPokemon.name),
       });
     }
   }, [pokemons]);
@@ -112,8 +112,8 @@ export function ArenaProvider({ children }: { children: ReactNode }) {
       console.log('entre turnos', currentHealth, moves[currentAtackerKey]);
       updateArenaData({
         message: infoBoxMessageValues.getAttackerPlusMoveName(
-          moves[currentAtackerKey].name,
-          arenaData[currentAtackerKey].name
+          arenaData[currentAtackerKey].name,
+          moves[currentAtackerKey].name
         ),
         isTurnOver: false,
         [currentAtackerKey]: {

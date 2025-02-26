@@ -28,35 +28,6 @@ export default function Page() {
               isTurnOver={arenaData.isTurnOver}
               onChoseMove={setMove}
             />
-            <div>
-              <button
-                // onClick={() => setMovesContainerOpen(!movesContainerOpen)}
-                className="hidden text-black w-full p-2 rounded mt-2"
-                // disabled={hasSelectedMove}
-              >
-                Choose Move
-              </button>
-              <div
-              // className={`bg-gray-700 w-full flex flex-col items-center gap-4 p-4 absolute left-0 bottom-0 z-[1000] transition-all duration-150 ease-in-out ${
-              //   movesContainerOpen
-              //     ? 'opacity-100 pointer-events-auto translate-y-0'
-              //     : 'opacity-0 pointer-events-none translate-y-[50px]'
-              // }`}
-              >
-                {/* {arenaData.myPokemon.arenaMoves.map((move, i) => (
-            <div
-              key={i}
-              className="w-[90%] text-center bg-aquamarine p-4 cursor-pointer"
-              // onClick={() => {
-              //   chooseMove(move, i);
-              //   setMovesContainerOpen(false);
-              // }}
-            >
-              <p>{move.name}</p>
-            </div>
-          ))} */}
-              </div>
-            </div>
           </div>
         )}
       </div>

@@ -23,7 +23,7 @@ export default function ThemeButtons() {
   return (
     <div className="mb-6">
       <h2 className="text-lg font-medium mb-2 text-textTertiary">{t('chooseTheme')}</h2>
-      <div className="flex space-x-4">
+      <div className="flex justify-center space-x-4">
         {buttons.map((button) => (
           <button
             key={button.id}
