@@ -14,5 +14,5 @@ export default function useOnLeavePage(onLeave: () => void) {
       console.log(`User is leaving ${pathname}`);
       onLeave();
     };
-  }, [pathname, onLeave]);
+  }, [pathname]);
 }

@@ -8,10 +8,18 @@ import PokemonInfo from '@/app/ui/components/pokemon-info.component';
 import RivalPokemonInfo from '@/app/ui/components/rival-pokemon-info.component';
 import ScreenPokeballPlaceholder from '@/app/ui/components/screen-pokeball-placeholder';
 import useOnLeavePage from '@/app/hooks/useOnLeavePage';
+import UserLeftArenaModal from '@/app/ui/components/user-left-arena-modal.component';
 
 export default function Page() {
-  const { onlineArenaData, rivalId, onlineId, chooseMove, infoBoxMessage, leaveArena } =
-    useMultiplayerContext();
+  const {
+    chooseMove,
+    infoBoxMessage,
+    leaveArena,
+    onlineArenaData,
+    onlineId,
+    rivalId,
+    rivalLeftArena,
+  } = useMultiplayerContext();
 
   const handleLeave = useCallback(() => {
     leaveArena();
@@ -73,6 +81,7 @@ export default function Page() {
         </div>
       </div>
       <GameOverModal isOpen={onlineArenaData.isOver} onClose={() => {}} />
+      <UserLeftArenaModal isOpen={rivalLeftArena} />
     </>
   );
 }

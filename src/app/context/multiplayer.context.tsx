@@ -30,6 +30,7 @@ type SocketIoContextType = {
   onlineId: string;
   receivedChallenge: ReceiveChallengeType;
   rivalId: ChallengerDataType['challengerId'];
+  rivalLeftArena: boolean;
   updateOnlineArenaData: (updates: Partial<OnlineArenaDataType>) => void;
 };
 
@@ -43,6 +44,7 @@ export const MultiplayerContext = createContext<undefined | SocketIoContextType>
 export const MultiplayerProvider = ({ children }: { children: ReactNode }) => {
   const [onlineId, setOnlineId] = useState<string>('');
   const [rivalId, setRivalId] = useState<ChallengerDataType['challengerId']>('');
+  const [rivalLeftArena, setRivalLeftArena] = useState(false);
   const [receivedChallenge, setReceivedChallenge] = useState<ReceiveChallengeType>(
     {} as ReceiveChallengeType
   );
@@ -53,6 +55,13 @@ export const MultiplayerProvider = ({ children }: { children: ReactNode }) => {
     useState<ChallengeRequestStatus>(defaultRequestStatus);
   const { infoBoxMessage, setInfoBoxMessage } = useInfoBoxMessage();
   const router = useRouter();
+
+  const resetArenaData = () => {
+    setOnlineArenaData({} as OnlineArenaDataType);
+    setChallengeRequestStatus(defaultRequestStatus);
+    setReceivedChallenge({} as ReceiveChallengeType);
+    resetChallengerData();
+  };
 
   const updateOnlineArenaData = (updates: Partial<OnlineArenaDataType>) => {
     setOnlineArenaData((prev) => ({
@@ -87,6 +96,7 @@ export const MultiplayerProvider = ({ children }: { children: ReactNode }) => {
 
   const leaveArena = () => {
     emit(SOCKET_ACTIONS.leavesRoom, { userId: onlineId, roomId: onlineArenaData.id });
+    resetArenaData();
   };
 
   const chooseMove = (move: MoveDetail) => {
@@ -211,7 +221,7 @@ export const MultiplayerProvider = ({ children }: { children: ReactNode }) => {
     });
 
     socket.on(SOCKET_RESPONSES.userDisconnected, () => {
-      alert('Rival disconnected');
+      setRivalLeftArena(true);
     });
 
     return () => {
@@ -234,6 +244,7 @@ export const MultiplayerProvider = ({ children }: { children: ReactNode }) => {
         onlineId,
         receivedChallenge,
         rivalId,
+        rivalLeftArena,
         updateOnlineArenaData,
       }}
     >
