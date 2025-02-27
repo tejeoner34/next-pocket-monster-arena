@@ -50,10 +50,6 @@ export function ArenaProvider({ children }: { children: ReactNode }) {
       arenaData.pokemons[rivalId].arenaMoves,
       arenaData.pokemons[userId].processedTypes
     );
-    console.log('my pokemon', arenaData.pokemons[userId].currentHealth);
-    console.log('rival', arenaData.pokemons[rivalId].currentHealth);
-    // debugger;
-    // Sometimes the pokemon currentHealth data seems to not be updated (mayby asynchronous problem)
     const updatedArenaData: ArenaData = {
       ...arenaData,
       chosenMoves: {
