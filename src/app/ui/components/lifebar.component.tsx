@@ -1,16 +1,10 @@
 import { ArenaPokemon } from '@/app/models/pokemon-model';
 
-const calculateLifeBarColor = (life: number) => {
-  const percentageLife = life / 100;
-  if (percentageLife >= 0.4) {
-    return 'green';
-  } else if (percentageLife < 0.4 && percentageLife > 0.2) {
-    return 'orange';
-  } else if (percentageLife <= 0.2) {
-    return 'red';
-  } else {
-    return '';
-  }
+const calculateLifeBarColor = (currentHealth: number, totalHealth: number) => {
+  const percentageLife = currentHealth / totalHealth;
+  if (percentageLife > 0.4) return 'green';
+  if (percentageLife > 0.2) return 'orange';
+  return 'red';
 };
 
 export default function Lifebar({
@@ -34,7 +28,7 @@ export default function Lifebar({
             className="h-full rounded-lg"
             style={{
               width: pokemon.currentPercentageHealth,
-              background: calculateLifeBarColor(pokemon.currentHealth),
+              background: calculateLifeBarColor(pokemon.currentHealth, pokemon.hp),
             }}
           ></div>
         </div>
