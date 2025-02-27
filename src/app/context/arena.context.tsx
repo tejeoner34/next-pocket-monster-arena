@@ -7,6 +7,7 @@ import {
   getPercentageString,
   getRemainingHP,
   getTurnOrder,
+  isSpecialEffect,
   modifyPokemonHealth,
   updatePokemonStatus,
   wait,
@@ -183,6 +184,12 @@ export function ArenaProvider({ children }: { children: ReactNode }) {
         break;
       }
       if (effectivinessInfo) {
+        await wait(waitTime);
+        setInfoBoxMessage({
+          type: effectivinessInfo.label,
+        });
+      }
+      if (effectivinessInfo && isSpecialEffect(effectivinessInfo)) {
         await wait(waitTime);
         setInfoBoxMessage({
           type: effectivinessInfo.label,

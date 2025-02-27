@@ -1,6 +1,5 @@
 'use client';
 import { createContext, ReactNode, useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { socket } from '../api';
 import {
   ArenaPokemon,
@@ -13,9 +12,11 @@ import {
   SOCKET_ACTIONS,
   SOCKET_RESPONSES,
 } from '../models';
-import { wait } from '../lib';
+import { isSpecialEffect, wait } from '../lib';
 import { useInfoBoxMessage } from '../hooks/useInfoBoxMessage';
 import { updatePokemonHealth, updatePokemonStatus } from '../lib/online-arena.utils';
+import { routes } from '../routes';
+import { useRouter } from '@/i18n/routing';
 
 type SocketIoContextType = {
   acceptChallenge: () => void;
@@ -166,7 +167,7 @@ export const MultiplayerProvider = ({ children }: { children: ReactNode }) => {
         gameOver(data, userId);
         break;
       }
-      if (effectivinessInfo) {
+      if (effectivinessInfo && isSpecialEffect(effectivinessInfo)) {
         await wait(waitTime);
         setInfoBoxMessage({
           type: effectivinessInfo.label,
@@ -178,6 +179,9 @@ export const MultiplayerProvider = ({ children }: { children: ReactNode }) => {
       ...prev,
       isTurnOver: true,
     }));
+    setInfoBoxMessage({
+      type: 'default',
+    });
   };
 
   useEffect(() => {
@@ -193,7 +197,7 @@ export const MultiplayerProvider = ({ children }: { children: ReactNode }) => {
     });
 
     socket.on(SOCKET_RESPONSES.challengeAccepted, (data: OnlineArenaDataType) => {
-      router.push('/online-arena/arena');
+      router.push(routes.onlineArena);
       setOnlineArenaData(data);
       setInfoBoxMessage({
         type: 'default',

@@ -19,7 +19,11 @@
     "arena": {
         "infoBox": {
             "attack": "{pokemonName} used {moveName}!",
-            "default": "Choose a move!"
+            "default": "Choose a move!",
+            "waitingForRival": "Waiting for rival...",
+            "not-effective": "Not very effective...",
+            "super-effective": "Super effective!",
+            "no-effect": "It has no effect..."
         }
     }
 }

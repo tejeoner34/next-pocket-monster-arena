@@ -1,4 +1,4 @@
-import { ArenaData, ArenaPokemon, ArenaPokemonStatus, Pokemon } from '../models';
+import { ArenaData, ArenaPokemon, ArenaPokemonStatus, DamageInfo, Pokemon } from '../models';
 
 export const getFasterPokemon = (pokemons: ArenaPokemon[]): ArenaPokemon[] =>
   pokemons.sort((a, b) => b.speed - a.speed);
@@ -42,3 +42,7 @@ export const modifyPokemonHealth = (data: ArenaData, newData: ArenaData, userId:
     },
   },
 });
+
+export const isSpecialEffect = (effectivinessInfo: DamageInfo): boolean => {
+  return effectivinessInfo.value !== 1;
+};

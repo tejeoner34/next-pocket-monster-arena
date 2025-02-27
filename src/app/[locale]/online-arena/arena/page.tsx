@@ -1,6 +1,5 @@
 'use client';
 import { useCallback } from 'react';
-import { redirect } from 'next/navigation';
 import { useMultiplayerContext } from '@/app/hooks';
 import GameOverModal from '@/app/ui/components/game-over-modal.component';
 import InfoBox from '@/app/ui/components/info-box.component';
@@ -9,6 +8,9 @@ import RivalPokemonInfo from '@/app/ui/components/rival-pokemon-info.component';
 import ScreenPokeballPlaceholder from '@/app/ui/components/screen-pokeball-placeholder';
 import useOnLeavePage from '@/app/hooks/useOnLeavePage';
 import UserLeftArenaModal from '@/app/ui/components/user-left-arena-modal.component';
+import { redirect } from '@/i18n/routing';
+import { useLocale } from 'next-intl';
+import { routes } from '@/app/routes';
 
 export default function Page() {
   const {
@@ -20,6 +22,7 @@ export default function Page() {
     rivalId,
     rivalLeftArena,
   } = useMultiplayerContext();
+  const locale = useLocale();
 
   const handleLeave = useCallback(() => {
     leaveArena();
@@ -28,7 +31,7 @@ export default function Page() {
   useOnLeavePage(handleLeave);
 
   if (!rivalId) {
-    redirect('/online-arena/find-player');
+    redirect({ href: routes.findPlayer, locale });
   }
 
   return (
@@ -49,35 +52,6 @@ export default function Page() {
             isTurnOver={onlineArenaData.isTurnOver}
             onChoseMove={chooseMove}
           />
-          <div>
-            <button
-              // onClick={() => setMovesContainerOpen(!movesContainerOpen)}
-              className="hidden text-black w-full p-2 rounded mt-2"
-              // disabled={hasSelectedMove}
-            >
-              Choose Move
-            </button>
-            <div
-            // className={`bg-gray-700 w-full flex flex-col items-center gap-4 p-4 absolute left-0 bottom-0 z-[1000] transition-all duration-150 ease-in-out ${
-            //   movesContainerOpen
-            //     ? 'opacity-100 pointer-events-auto translate-y-0'
-            //     : 'opacity-0 pointer-events-none translate-y-[50px]'
-            // }`}
-            >
-              {/* {onlineArenaData.myPokemon.arenaMoves.map((move, i) => (
-                <div
-                  key={i}
-                  className="w-[90%] text-center bg-aquamarine p-4 cursor-pointer"
-                  // onClick={() => {
-                  //   chooseMove(move, i);
-                  //   setMovesContainerOpen(false);
-                  // }}
-                >
-                  <p>{move.name}</p>
-                </div>
-              ))} */}
-            </div>
-          </div>
         </div>
       </div>
       <GameOverModal isOpen={onlineArenaData.isOver} onClose={() => {}} />
