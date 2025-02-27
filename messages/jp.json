@@ -18,8 +18,8 @@
     },
     "arena": {
         "infoBox": {
-            "attackerPlusMove": "{pokemonName} used {moveName}!",
-            "default": "What will {pokemonName} do?"
+            "attack": "{pokemonName} used {moveName}!",
+            "default": "Choose a move!"
         }
     }
 }

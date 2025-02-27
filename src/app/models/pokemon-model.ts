@@ -39,6 +39,16 @@ export interface ArenaPokemon extends Pokemon {
   currentHealth: number;
   currentPercentageHealth: string;
   isAlive: boolean;
+  receivedAttackData: ReceivedMoveDetail;
+}
+
+export interface ReceivedMoveDetail extends MoveDetail {
+  damageInfo: DamageInfo;
+}
+
+export interface DamageInfo {
+  label: DamageLabel;
+  value: number;
 }
 
 export interface Ability {
@@ -90,7 +100,7 @@ export interface DamageInfo {
   value: number;
 }
 
-export type DamageLabel = 'super-effective' | 'not-effective';
+export type DamageLabel = 'super-effective' | 'not-effective' | 'no-effect' | 'neutral';
 
 export interface Type {
   name: PokemonType;

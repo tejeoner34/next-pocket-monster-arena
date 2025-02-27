@@ -1,13 +1,18 @@
+import { BattleFlow } from './battleFlow';
 import { ArenaPokemon, MoveDetail } from './pokemon-model';
 
 export interface ArenaData {
-  myPokemon: ArenaPokemon;
-  rivalPokemon: ArenaPokemon;
+  users: UserId[];
+  pokemons: Record<string, ArenaPokemon>;
   isOver: boolean;
-  turnOrder: [ArenaPokemonKeys, ArenaPokemonKeys];
+  turnOrder: string[];
   isTurnOver: boolean;
-  message: MessageIntl;
+  chosenMoves: Record<UserId, MoveDetail>;
+  battleFlow: BattleFlow;
+  isArenaReady: boolean;
 }
+
+type UserId = string;
 
 export type MessageIntl = {
   key: string;

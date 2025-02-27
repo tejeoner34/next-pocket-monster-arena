@@ -1,4 +1,4 @@
-import { ArenaMoves, PokemonType } from '../models/pokemon-model';
+import { ArenaMoves, DamageLabel, PokemonType } from '../models';
 
 const neutralDamage: TypeEffectivenessEntry = {
   value: 1,
@@ -164,16 +164,9 @@ const typeEffectiveness: TypeEffectivenessMap = {
   },
 };
 
-type TypeEffectivenessLabel =
-  | 'super-effective'
-  | 'normal'
-  | 'not-effective'
-  | 'no-effect'
-  | 'neutral';
-
 interface TypeEffectivenessEntry {
   value: number;
-  label: TypeEffectivenessLabel;
+  label: DamageLabel;
 }
 
 type TypeEffectivenessMap = {
@@ -220,7 +213,7 @@ export const getRemainingHP = ({
 }) => {
   if (!attacksPower) return pokemonHP;
   const remainingHP = Math.floor(
-    pokemonHP - (receivedAttackEffectivinessIndex * attackerBasePower * attacksPower) / 100
+    pokemonHP - attackerBasePower * 0.2 - (attacksPower / 5) * receivedAttackEffectivinessIndex
   );
   return remainingHP > 0 ? remainingHP : 0;
 };

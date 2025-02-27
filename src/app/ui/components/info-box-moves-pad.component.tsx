@@ -10,7 +10,8 @@ type InfoBoxMovesPadProps = {
 export default function InfoBoxMovesPad({ moves, isTurnOver, onChoseMove }: InfoBoxMovesPadProps) {
   const { handleClick, movesMatrix, selectedCol, selectedRow } = useMovesGamePad(
     moves,
-    onChoseMove
+    onChoseMove,
+    isTurnOver
   );
 
   return (

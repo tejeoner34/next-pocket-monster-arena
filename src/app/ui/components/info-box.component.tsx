@@ -1,19 +1,16 @@
 import { ArenaMoves } from '@/app/models/pokemon-model';
 import InfoBoxMovesPad from './info-box-moves-pad.component';
 import { useGameStyleMessage } from '@/app/hooks/useGameStyleMessage';
-import { MessageIntl } from '@/app/models';
-import { useTranslations } from 'next-intl';
 
 type InfoBoxProps = {
-  boxMessage: MessageIntl;
+  boxMessage: string;
   moves: ArenaMoves;
   isTurnOver: boolean;
   onChoseMove: (move: ArenaMoves[0]) => void;
 };
 
 export default function InfoBox({ boxMessage, moves, isTurnOver, onChoseMove }: InfoBoxProps) {
-  const t = useTranslations('arena.infoBox');
-  const { typedMessage } = useGameStyleMessage(t(boxMessage.key, { ...boxMessage.params }));
+  const { typedMessage } = useGameStyleMessage(boxMessage);
   return (
     <div>
       <div className="flex h-[140px] relative border-8 border-infoBoxBorder z-[500]">

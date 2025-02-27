@@ -16,7 +16,6 @@ export const getRandomPokemon = async () => {
 };
 
 export const getXamountOfPokemon = async (amount: number): Promise<Pokemon[]> => {
-  console.log('calling');
   const randomPokemonIds = Array.from({ length: amount });
   try {
     return await Promise.all(
@@ -49,7 +48,6 @@ const get4MovesInfo = async (pokemon: Pokemon): Promise<MoveDetail[]> => {
     const response = await Promise.all(
       chosenMoves.map(async (move) => await axios.get(move.move.url))
     );
-    console.log('get 4 moves info', response);
     return response.map((move) => move.data);
   } catch (error) {
     console.log(error);

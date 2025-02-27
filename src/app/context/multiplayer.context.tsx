@@ -135,7 +135,7 @@ export const MultiplayerProvider = ({ children }: { children: ReactNode }) => {
 
   const gameOver = (data: OnlineArenaDataType, userId: string) => {
     emit(SOCKET_ACTIONS.gameOver, { userId, roomId: data.id });
-    setInfoBoxMessage({ type: 'gameOver', pokemonName: data.pokemons[userId].name });
+    // setInfoBoxMessage({ type: 'gameOver', pokemonName: data.pokemons[userId].name });
   };
 
   const gameLoop = async (data: OnlineArenaDataType) => {

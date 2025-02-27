@@ -1,33 +1,12 @@
 import { useState } from 'react';
 import { DamageLabel } from '../models/pokemon-model';
+import { useTranslations } from 'next-intl';
 
-export type InfoBoxMessageType =
-  | 'default'
-  | 'attack'
-  | 'missed'
-  | 'waitingForRival'
-  | 'gameOver'
-  | DamageLabel;
-
-const getInfoBoxMessage = (
-  messageType: InfoBoxMessageType,
-  pokemonName: string = '',
-  moveName: string = ''
-) => {
-  const messages: Record<InfoBoxMessageType, string> = {
-    default: `What will ${pokemonName} do`,
-    attack: `${pokemonName} used ${moveName}`,
-    'super-effective': 'Its super effective',
-    'not-effective': 'Its not very effective',
-    missed: 'It missed',
-    waitingForRival: 'Waiting for rival',
-    gameOver: `${pokemonName} has been defeated`,
-  };
-  return messages[messageType];
-};
+export type InfoBoxMessageType = 'default' | 'attack' | 'missed' | 'waitingForRival' | DamageLabel;
 
 export function useInfoBoxMessage() {
-  const [infoBoxMessage, _setInfoBoxMessage] = useState<string>('');
+  const t = useTranslations('arena.infoBox');
+  const [infoBoxMessage, _setInfoBoxMessage] = useState<string>(t('default'));
 
   const setInfoBoxMessage = ({
     type,
@@ -38,7 +17,7 @@ export function useInfoBoxMessage() {
     pokemonName?: string;
     moveName?: string;
   }) => {
-    const message = getInfoBoxMessage(type, pokemonName, moveName);
+    const message = t(type, { pokemonName, moveName });
     _setInfoBoxMessage(message);
   };
   return {

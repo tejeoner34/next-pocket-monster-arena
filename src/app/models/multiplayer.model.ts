@@ -1,4 +1,5 @@
-import { ArenaPokemon, DamageInfo, MoveDetail } from './pokemon-model';
+import { ArenaPokemon, MoveDetail } from './pokemon-model';
+import { BattleFlow } from './battleFlow';
 
 export interface ChallengeResponseType {
   ok: boolean;
@@ -69,18 +70,3 @@ export const SOCKET_RESPONSES = {
   userDisconnected: 'user-disconnected',
   leavesRoom: 'leaves-room',
 };
-
-export interface BattleStep {
-  action: BattleFlowAction;
-  userId: string;
-  targetId?: string;
-  waitTime: number;
-  isGameOver?: boolean;
-  pokemonName: ArenaPokemon['name'];
-  moveName: MoveDetail['name'];
-  effectivinessInfo?: DamageInfo;
-}
-
-export type BattleFlow = BattleStep[];
-
-export type BattleFlowAction = 'attack' | 'receiveDamage' | 'updateHealthBar';

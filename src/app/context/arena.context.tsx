@@ -4,33 +4,34 @@ import { usePokemon } from '../hooks';
 import {
   getMostEffectiveMove,
   getMoveEffectivinesInfo,
+  getPercentageString,
   getRemainingHP,
-  infoBoxMessageValues,
+  getTurnOrder,
+  modifyPokemonHealth,
+  updatePokemonStatus,
   wait,
 } from '../lib';
-import {
-  ArenaData,
-  ArenaPokemon,
-  ArenaPokemonKeys,
-  arenaPokemonStatus,
-  ChosenMovesType,
-  MoveDetail,
-  Pokemon,
-} from '../models';
+import { ArenaData, ArenaPokemon, MoveDetail, Pokemon, ReceivedMoveDetail } from '../models';
+import { useInfoBoxMessage } from '../hooks/useInfoBoxMessage';
+import { createBattleFlow } from '../models/battleFlow';
 
 type ArenaContextType = {
   arenaData: ArenaData;
   isLoading: boolean;
-  setMove: (move: MoveDetail) => void;
-  chosenMoves: ChosenMovesType;
+  chooseMove: (move: MoveDetail) => void;
+  userId: string;
+  rivalId: string;
+  infoBoxMessage: string;
 };
 
 export const ArenaContext = createContext<ArenaContextType | undefined>(undefined);
 
 export function ArenaProvider({ children }: { children: ReactNode }) {
+  const [userId, setUserId] = useState<string>('');
+  const [rivalId, setRivalId] = useState<string>('');
   const { data: pokemons, isLoading } = usePokemon();
   const [arenaData, setArenaData] = useState<ArenaData>({} as ArenaData);
-  const [chosenMoves, setChosenMove] = useState<ChosenMovesType>({} as ChosenMovesType);
+  const { infoBoxMessage, setInfoBoxMessage } = useInfoBoxMessage();
 
   const updateArenaData = (updates: Partial<ArenaData>) => {
     setArenaData((prev) => ({
@@ -39,122 +40,170 @@ export function ArenaProvider({ children }: { children: ReactNode }) {
     }));
   };
 
-  const updatePokemonData = (key: ArenaPokemonKeys, updates: Partial<ArenaPokemon>) => {
+  const chooseMove = (move: MoveDetail) => {
+    console.log('MOVE', move);
     setArenaData((prev) => ({
       ...prev,
-      [key]: {
-        ...prev[key],
-        ...updates,
-      },
+      isTurnOver: false,
     }));
-  };
-
-  const setMove = (move: MoveDetail) => {
-    if (!arenaData.isTurnOver || arenaData.isOver) return;
-    const currentTurnMoces = {
-      myPokemon: move,
-      rivalPokemon: getMostEffectiveMove(
-        arenaData.rivalPokemon.arenaMoves,
-        arenaData.myPokemon.processedTypes
-      ),
+    const rivalMove = getMostEffectiveMove(
+      arenaData.pokemons[rivalId].arenaMoves,
+      arenaData.pokemons[userId].processedTypes
+    );
+    console.log('my pokemon', arenaData.pokemons[userId].currentHealth);
+    console.log('rival', arenaData.pokemons[rivalId].currentHealth);
+    // debugger;
+    // Sometimes the pokemon currentHealth data seems to not be updated (mayby asynchronous problem)
+    const updatedArenaData: ArenaData = {
+      ...arenaData,
+      chosenMoves: {
+        [userId]: move,
+        [rivalId]: rivalMove,
+      },
+      pokemons: {
+        [userId]: updatePokemonHealth(
+          arenaData.pokemons[userId],
+          arenaData.pokemons[rivalId],
+          rivalMove
+        ),
+        [rivalId]: updatePokemonHealth(
+          arenaData.pokemons[rivalId],
+          arenaData.pokemons[userId],
+          move
+        ),
+      },
     };
 
-    setChosenMove(currentTurnMoces);
-    attack(currentTurnMoces);
+    const battleFlow = createBattleFlow(userId, rivalId, updatedArenaData);
+    gameLoop({ ...updatedArenaData, battleFlow });
+  };
+
+  const updatePokemonHealth = (
+    pokemon: ArenaPokemon,
+    attackerPokemon: ArenaPokemon,
+    move: MoveDetail
+  ): ArenaPokemon => {
+    const updatedPokemon = { ...pokemon };
+    const moveEffectiviness = getMoveEffectivinesInfo(
+      move.type.name,
+      arenaData.pokemons[rivalId].processedTypes[0]
+    ).value;
+
+    const remainingHP = getRemainingHP({
+      pokemonHP: updatedPokemon.currentHealth,
+      receivedAttackEffectivinessIndex: moveEffectiviness,
+      attackerBasePower: attackerPokemon.power,
+      attacksPower: move.power,
+    });
+
+    updatedPokemon.currentHealth = remainingHP;
+    updatedPokemon.currentPercentageHealth = getPercentageString(remainingHP, pokemon.hp);
+    updatedPokemon.isAlive = updatedPokemon.currentHealth > 0;
+    updatedPokemon.status = updatedPokemon.isAlive ? 'idle' : 'defeated';
+    return updatedPokemon;
   };
 
   useEffect(() => {
     if (pokemons) {
+      const createRandomId = () => {
+        const id = Math.random().toString(36).substring(2, 15);
+        return id;
+      };
+      const newUserId = createRandomId();
+      const newRivalId = createRandomId();
+      setUserId(newUserId);
+      setRivalId(newRivalId);
       const myPokemon = initiatePokemonForArena(pokemons[0]);
       const rivalPokemon = initiatePokemonForArena(pokemons[1]);
+      const arenaPokemons = {
+        [newUserId]: myPokemon,
+        [newRivalId]: rivalPokemon,
+      };
       updateArenaData({
-        myPokemon,
-        rivalPokemon,
+        users: [newUserId, newRivalId],
+        pokemons: arenaPokemons,
         isOver: false,
-        turnOrder: ['myPokemon', 'rivalPokemon'],
+        turnOrder: getTurnOrder(arenaPokemons),
         isTurnOver: true,
-        message: infoBoxMessageValues.default(myPokemon.name),
+        isArenaReady: true,
       });
     }
   }, [pokemons]);
 
-  const isGameOver = (attackedPokemonHP: number) => {
-    const isOver = attackedPokemonHP <= 0;
-    if (isOver) {
-      updateArenaData({
-        isOver: true,
-        isTurnOver: true,
-      });
-    }
-    return isOver;
+  const attack = (
+    pokemonName: ArenaPokemon['name'],
+    moveName: MoveDetail['name'],
+    attacker: string
+  ) => {
+    setInfoBoxMessage({
+      type: 'attack',
+      pokemonName,
+      moveName,
+    });
+    setArenaData((prev) => updatePokemonStatus('attacking', attacker, prev));
   };
 
-  const attack = async (moves: ChosenMovesType) => {
-    let localIsGameOver = false;
+  const receiveDamage = (receiver: string) => {
+    setArenaData((prev) => updatePokemonStatus('stunned', receiver, prev));
+  };
 
-    for (const currentAtackerKey of arenaData.turnOrder) {
-      if (localIsGameOver) break;
+  const updateHealthBar = (receiver: string, newData: ArenaData) => {
+    setArenaData((prev) => modifyPokemonHealth(prev, newData, receiver));
+  };
 
-      const nonAttackingPokemon: { [key in ArenaPokemonKeys]: ArenaPokemonKeys } = {
-        myPokemon: 'rivalPokemon',
-        rivalPokemon: 'myPokemon',
-      };
+  const gameOver = () => {
+    updateArenaData({
+      isOver: true,
+      isTurnOver: true,
+    });
+  };
 
-      const currentHealth = getRemainingHP({
-        pokemonHP: arenaData[nonAttackingPokemon[currentAtackerKey]].currentHealth,
-        receivedAttackEffectivinessIndex: getMoveEffectivinesInfo(
-          moves[currentAtackerKey].type.name,
-          arenaData[nonAttackingPokemon[currentAtackerKey]].processedTypes[0]
-        ).value,
-        attackerBasePower: arenaData[currentAtackerKey].power,
-        attacksPower: moves[currentAtackerKey].power,
-      });
-      console.log('entre turnos', currentHealth, moves[currentAtackerKey]);
-      updateArenaData({
-        message: infoBoxMessageValues.getAttackerPlusMoveName(
-          arenaData[currentAtackerKey].name,
-          moves[currentAtackerKey].name
-        ),
-        isTurnOver: false,
-        [currentAtackerKey]: {
-          ...arenaData[currentAtackerKey],
-          status: arenaPokemonStatus.attacking,
-        },
-      });
-      await wait(1000);
-
-      updatePokemonData(nonAttackingPokemon[currentAtackerKey], {
-        status: arenaPokemonStatus.stunned,
-      });
-
-      updatePokemonData(nonAttackingPokemon[currentAtackerKey], {
-        currentHealth,
-        currentPercentageHealth: `${(
-          (currentHealth / arenaData[nonAttackingPokemon[currentAtackerKey]].hp) *
-          100
-        ).toString()}%`,
-      });
-
-      updatePokemonData(currentAtackerKey, { status: arenaPokemonStatus.idle });
-
-      if (currentHealth <= 0) {
-        updatePokemonData(nonAttackingPokemon[currentAtackerKey], {
-          status: arenaPokemonStatus.defeated,
+  const gameLoop = async (data: ArenaData) => {
+    const { battleFlow } = data;
+    for (const {
+      action,
+      userId,
+      waitTime,
+      isGameOver,
+      moveName,
+      pokemonName,
+      effectivinessInfo,
+    } of battleFlow) {
+      switch (action) {
+        case 'attack':
+          attack(pokemonName, moveName, userId);
+          break;
+        case 'receiveDamage':
+          receiveDamage(userId);
+          break;
+        case 'updateHealthBar':
+          updateHealthBar(userId, data);
+          break;
+        default:
+          break;
+      }
+      if (isGameOver) {
+        gameOver();
+        break;
+      }
+      if (effectivinessInfo) {
+        await wait(waitTime);
+        setInfoBoxMessage({
+          type: effectivinessInfo.label,
         });
       }
-      await wait(1000);
-
-      updatePokemonData(nonAttackingPokemon[currentAtackerKey], {
-        status: arenaPokemonStatus.idle,
-      });
-
-      localIsGameOver = isGameOver(currentHealth);
+      await wait(waitTime);
     }
-    updateArenaData({ isTurnOver: true });
+    setArenaData((prev) => ({
+      ...prev,
+      isTurnOver: true,
+    }));
   };
 
   return (
-    <ArenaContext.Provider value={{ arenaData, isLoading, setMove, chosenMoves }}>
+    <ArenaContext.Provider
+      value={{ arenaData, isLoading, chooseMove, userId, rivalId, infoBoxMessage }}
+    >
       {children}
     </ArenaContext.Provider>
   );
@@ -174,4 +223,5 @@ const initiatePokemonForArena = (pokemon: Pokemon): ArenaPokemon => ({
   currentPercentageHealth: '100%',
   isAlive: true,
   status: 'idle',
+  receivedAttackData: {} as ReceivedMoveDetail,
 });

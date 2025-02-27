@@ -7,26 +7,25 @@ import RivalPokemonInfo from '@/app/ui/components/rival-pokemon-info.component';
 import ScreenPokeballPlaceholder from '@/app/ui/components/screen-pokeball-placeholder';
 
 export default function Page() {
-  const { arenaData, isLoading, setMove } = useArenaContext();
-
+  const { arenaData, rivalId, userId, isLoading, chooseMove, infoBoxMessage } = useArenaContext();
   return (
     <>
       <ScreenPokeballPlaceholder isOpen={!isLoading} />
 
       <div className="relative w-full overflow-hidden h-[540px] rounded bg-gradient-to-b from-[#242400] to-[#DDECE0]">
-        {arenaData.myPokemon && arenaData.rivalPokemon && (
+        {arenaData.isArenaReady && (
           <div>
             <div className="flex flex-row-reverse justify-around">
-              <RivalPokemonInfo pokemon={arenaData.rivalPokemon} />
+              <RivalPokemonInfo pokemon={arenaData.pokemons[rivalId]} />
             </div>
             <div className="flex justify-around items-center w-full">
-              <PokemonInfo pokemon={arenaData.myPokemon} />
+              <PokemonInfo pokemon={arenaData.pokemons[userId]} />
             </div>
             <InfoBox
-              boxMessage={arenaData.message}
-              moves={arenaData.myPokemon.arenaMoves}
+              boxMessage={infoBoxMessage}
+              moves={arenaData.pokemons[userId].arenaMoves}
               isTurnOver={arenaData.isTurnOver}
-              onChoseMove={setMove}
+              onChoseMove={chooseMove}
             />
           </div>
         )}
