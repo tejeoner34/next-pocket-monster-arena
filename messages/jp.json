@@ -1,29 +1,44 @@
 {
     "home": {
-        "chooseLanguage": "言語を選択してください",
-        "chooseTheme": "テーマを選択してください",
-        "playMultiplayer": "マルチプレイヤーをプレイ",
+        "chooseLanguage": "言語を選択",
+        "chooseTheme": "テーマを選択",
+        "playMultiplayer": "マルチプレイヤーで遊ぶ",
         "english": "英語",
         "japanese": "日本語",
         "dark": "ダーク",
         "light": "ライト",
         "multiplayer": "マルチプレイヤー",
         "playerVsCpu": "プレイヤー対CPU",
-        "play": "プレイ"
+        "play": "遊ぶ"
     },
     "gameOverModal": {
-        "title": "Game Over",
-        "playAgain": "Play Again",
-        "exit": "Exit"
+        "title": "ゲームオーバー",
+        "playAgain": "もう一度遊ぶ",
+        "exit": "終了"
     },
     "arena": {
         "infoBox": {
-            "attack": "{pokemonName} used {moveName}!",
-            "default": "Choose a move!",
-            "waitingForRival": "Waiting for rival...",
-            "not-effective": "Not very effective...",
-            "super-effective": "Super effective!",
-            "no-effect": "It has no effect..."
+            "attack": "{pokemonName}は{moveName}を使った！",
+            "default": "技を選んでください！",
+            "waitingForRival": "ライバルを待っています...",
+            "not-effective": "効果が今一つ...",
+            "super-effective": "効果は抜群だ！",
+            "no-effect": "効果がない..."
         }
+    },
+    "findPlayer": {
+        "title": "あなたのID: ",
+        "copied": "コピーしました",
+        "copy-id": "IDをコピー",
+        "requestStatus": {
+            "waitingResponse": "対戦相手を待っています...",
+            "opponentAccepted": "対戦相手が挑戦を受け入れました！",
+            "opponentRejected": "対戦相手が挑戦を拒否しました！",
+            "noUserFound": "ユーザーが見つかりません"
+        }
+    },
+    "userLeftArenaModal": {
+        "title": "ライバルがアリーナを離れました！",
+        "cta": "終了"
     }
 }

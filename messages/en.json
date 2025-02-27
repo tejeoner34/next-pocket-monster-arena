@@ -25,5 +25,20 @@
             "super-effective": "Super effective!",
             "no-effect": "It has no effect..."
         }
+    },
+    "findPlayer": {
+        "title": "Your ID: ",
+        "copied": "Copied",
+        "copy-id": "Copy ID",
+        "requestStatus": {
+            "waitingResponse": "Waiting for opponent...",
+            "opponentAccepted": "Opponent accepted the challenge!",
+            "opponentRejected": "Opponent declined the challenge!",
+            "noUserFound": "No user found"
+        }
+    },
+    "userLeftArenaModal": {
+        "title": "Rival left arena!",
+        "cta": "Exit"
     }
 }
