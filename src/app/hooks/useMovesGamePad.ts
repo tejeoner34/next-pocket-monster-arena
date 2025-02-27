@@ -9,14 +9,10 @@ export function useMovesGamePad(
   setMove: (move: MoveDetail) => void,
   isTurnOver: boolean
 ) {
-  // const movesMatrix = [
-  //   [moves[0], moves[1]],
-  //   [moves[2], moves[3]],
-  // ];
-  const [movesMatrix] = useState([
+  const movesMatrix = [
     [moves[0], moves[1]],
     [moves[2], moves[3]],
-  ]);
+  ];
   const [selectedRow, setSelectedRow] = useState(0);
   const [selectedCol, setSelectedCol] = useState(0);
 
