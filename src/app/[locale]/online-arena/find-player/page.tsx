@@ -25,26 +25,24 @@ export default function Page() {
     challengeRequestStatus.status === REQUEST_STATUSES.ACCEPTED;
 
   return (
-    <div className="w-full h-full flex justify-center pt-2.5">
-      <div className="min-w-[350px] max-w-[500px] h-fit border-8 border-white p-4 flex flex-col items-center justify-center text-center shadow-lg">
-        <h2 className="text-xs leading-5">
-          {t('title')}
-          {onlineId}
-        </h2>
-        <div>
-          <button
-            className="px-2 py-1 cursor-pointer text-black bg-white rounded-md"
-            onClick={() => copyToClipboard(onlineId)}
-          >
-            {isCopied ? t('copied') : t('copy-id')}
-          </button>
-        </div>
-        <FindPlayerForm />
-
-        {challengeRequestStatus.isSent && (
-          <p>{t(`requestStatus.${requestStatusMessages[challengeRequestStatus.status]}`)}</p>
-        )}
+    <div className="w-full h-full flex flex-col items-center justify-center gap-5 text-center p-2.5">
+      <h2 className="text-xs leading-5">
+        {t('title')}
+        {onlineId}
+      </h2>
+      <div>
+        <button
+          className="px-2 py-1 cursor-pointer text-black bg-white rounded-md"
+          onClick={() => copyToClipboard(onlineId)}
+        >
+          {isCopied ? t('copied') : t('copy-id')}
+        </button>
       </div>
+      <FindPlayerForm />
+
+      {challengeRequestStatus.isSent && (
+        <p>{t(`requestStatus.${requestStatusMessages[challengeRequestStatus.status]}`)}</p>
+      )}
       <ReceiveChallengedModal
         challenderId={receivedChallenge.challengerId}
         isOpen={!!receivedChallenge.challengerId}

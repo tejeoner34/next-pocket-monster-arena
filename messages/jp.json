@@ -30,6 +30,7 @@
         "title": "あなたのID: ",
         "copied": "コピーしました",
         "copy-id": "IDをコピー",
+        "challenge": "チャレンジ",
         "requestStatus": {
             "waitingResponse": "対戦相手を待っています...",
             "opponentAccepted": "対戦相手が挑戦を受け入れました！",

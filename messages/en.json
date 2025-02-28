@@ -30,6 +30,7 @@
         "title": "Your ID: ",
         "copied": "Copied",
         "copy-id": "Copy ID",
+        "challenge": "Challenge",
         "requestStatus": {
             "waitingResponse": "Waiting for opponent...",
             "opponentAccepted": "Opponent accepted the challenge!",
