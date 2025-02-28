@@ -84,6 +84,7 @@ export const MultiplayerProvider = ({ children }: { children: ReactNode }) => {
 
   const resetChallengerData = () => {
     setRivalId('');
+    setReceivedChallenge({} as ReceiveChallengeType);
   };
 
   const declineChallenge = () => {
@@ -234,7 +235,6 @@ export const MultiplayerProvider = ({ children }: { children: ReactNode }) => {
     });
 
     socket.on(SOCKET_RESPONSES.rematch, (data: OnlineArenaDataType) => {
-      console.log('DATA', data);
       setOnlineArenaData(data);
     });
 
