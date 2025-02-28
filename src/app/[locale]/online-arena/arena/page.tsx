@@ -17,6 +17,7 @@ export default function Page() {
     chooseMove,
     infoBoxMessage,
     leaveArena,
+    playAgain,
     onlineArenaData,
     onlineId,
     rivalId,
@@ -54,7 +55,7 @@ export default function Page() {
           />
         </div>
       </div>
-      <GameOverModal isOpen={onlineArenaData.isOver} onClose={() => {}} />
+      <GameOverModal isOpen={onlineArenaData.isOver} onClose={() => {}} onAccept={playAgain} />
       <UserLeftArenaModal isOpen={rivalLeftArena} />
     </>
   );

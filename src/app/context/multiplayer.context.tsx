@@ -24,6 +24,7 @@ type SocketIoContextType = {
   challengeUser: ({ challengerId, rivalId }: { challengerId: string; rivalId: string }) => void;
   chooseMove: (move: MoveDetail) => void;
   declineChallenge: () => void;
+  playAgain: () => void;
   emit: <T>(eventName: string, data: T) => void;
   infoBoxMessage: string;
   leaveArena: () => void;
@@ -100,6 +101,15 @@ export const MultiplayerProvider = ({ children }: { children: ReactNode }) => {
     resetArenaData();
   };
 
+  const playAgain = () => {
+    emit(SOCKET_ACTIONS.rematch, { roomId: onlineArenaData.id });
+    setOnlineArenaData((prev) => ({
+      ...prev,
+      isOver: false,
+      isArenaReady: false,
+    }));
+  };
+
   const chooseMove = (move: MoveDetail) => {
     setOnlineArenaData((prev) => ({
       ...prev,
@@ -136,7 +146,6 @@ export const MultiplayerProvider = ({ children }: { children: ReactNode }) => {
 
   const gameOver = (data: OnlineArenaDataType, userId: string) => {
     emit(SOCKET_ACTIONS.gameOver, { userId, roomId: data.id });
-    // setInfoBoxMessage({ type: 'gameOver', pokemonName: data.pokemons[userId].name });
   };
 
   const gameLoop = async (data: OnlineArenaDataType) => {
@@ -224,6 +233,11 @@ export const MultiplayerProvider = ({ children }: { children: ReactNode }) => {
       }));
     });
 
+    socket.on(SOCKET_RESPONSES.rematch, (data: OnlineArenaDataType) => {
+      console.log('DATA', data);
+      setOnlineArenaData(data);
+    });
+
     socket.on(SOCKET_RESPONSES.userDisconnected, () => {
       setRivalLeftArena(true);
     });
@@ -241,6 +255,7 @@ export const MultiplayerProvider = ({ children }: { children: ReactNode }) => {
         challengeUser,
         chooseMove,
         declineChallenge,
+        playAgain,
         emit,
         infoBoxMessage,
         leaveArena,

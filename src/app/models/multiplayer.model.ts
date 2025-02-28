@@ -56,6 +56,7 @@ export const SOCKET_ACTIONS = {
   chooseMove: 'choose-move',
   gameOver: 'game-over',
   leavesRoom: 'leaves-room',
+  rematch: 'rematch',
 };
 
 export const SOCKET_RESPONSES = {
@@ -69,4 +70,5 @@ export const SOCKET_RESPONSES = {
   gameOver: 'game-over',
   userDisconnected: 'user-disconnected',
   leavesRoom: 'leaves-room',
+  rematch: 'rematch',
 };

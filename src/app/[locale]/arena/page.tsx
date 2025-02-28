@@ -30,7 +30,11 @@ export default function Page() {
           </div>
         )}
       </div>
-      <GameOverModal isOpen={arenaData.isOver} onClose={() => {}} />
+      <GameOverModal
+        isOpen={arenaData.isOver}
+        onClose={() => {}}
+        onAccept={() => window.location.reload()}
+      />
     </>
   );
 }
