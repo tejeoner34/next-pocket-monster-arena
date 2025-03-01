@@ -1,26 +1,9 @@
-import { ArenaPokemon, MoveDetail } from './pokemon-model';
-import { BattleFlow } from './battleFlow';
-
 export interface ChallengeResponseType {
   ok: boolean;
   accept: boolean;
   message: string;
   roomId?: string;
   userId?: string;
-}
-
-export interface OnlineArenaDataType {
-  id: string;
-  users: string[];
-  pokemons: Record<string, ArenaPokemon>;
-  isOver: boolean;
-  turnOrder: [string, string];
-  isTurnOver: boolean;
-  message: string;
-  choseMoves: Record<string, MoveDetail>;
-  isRoomComplete: boolean;
-  battleFlow: BattleFlow;
-  isArenaReady: boolean;
 }
 
 export interface ReceiveChallengeType {

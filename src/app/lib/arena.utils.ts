@@ -1,4 +1,13 @@
-import { ArenaData, ArenaPokemon, ArenaPokemonStatus, DamageInfo, Pokemon } from '../models';
+import {
+  ArenaData,
+  ArenaPokemon,
+  ArenaPokemonStatus,
+  DamageInfo,
+  MoveDetail,
+  Pokemon,
+} from '../models';
+import { getMoveEffectivinesInfo, getRemainingHP } from './pokemon-moves-types-relationship';
+import { getPercentageString } from './utils';
 
 export const getFasterPokemon = (pokemons: ArenaPokemon[]): ArenaPokemon[] =>
   pokemons.sort((a, b) => b.speed - a.speed);
@@ -45,4 +54,31 @@ export const modifyPokemonHealth = (data: ArenaData, newData: ArenaData, userId:
 
 export const isSpecialEffect = (effectivinessInfo: DamageInfo): boolean => {
   return effectivinessInfo.value !== 1;
+};
+
+export const updatePokemonHealth = (
+  pokemon: ArenaPokemon,
+  attackerPokemon: ArenaPokemon,
+  move: MoveDetail,
+  arenaData: ArenaData,
+  rivalId: string
+): ArenaPokemon => {
+  const updatedPokemon = { ...pokemon };
+  const moveEffectiviness = getMoveEffectivinesInfo(
+    move.type.name,
+    arenaData.pokemons[rivalId].processedTypes[0]
+  ).value;
+
+  const remainingHP = getRemainingHP({
+    pokemonHP: updatedPokemon.currentHealth,
+    receivedAttackEffectivinessIndex: moveEffectiviness,
+    attackerBasePower: attackerPokemon.power,
+    attacksPower: move.power,
+  });
+
+  updatedPokemon.currentHealth = remainingHP;
+  updatedPokemon.currentPercentageHealth = getPercentageString(remainingHP, pokemon.hp);
+  updatedPokemon.isAlive = updatedPokemon.currentHealth > 0;
+  updatedPokemon.status = updatedPokemon.isAlive ? 'idle' : 'defeated';
+  return updatedPokemon;
 };

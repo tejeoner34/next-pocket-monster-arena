@@ -3,19 +3,16 @@ import { createContext, ReactNode, useContext, useState, useEffect } from 'react
 import { usePokemon } from '../hooks';
 import {
   getMostEffectiveMove,
-  getMoveEffectivinesInfo,
-  getPercentageString,
-  getRemainingHP,
   getTurnOrder,
-  isSpecialEffect,
   modifyPokemonHealth,
+  updatePokemonHealth,
   updatePokemonStatus,
-  wait,
 } from '../lib';
 import { ArenaData, ArenaPokemon, MoveDetail, Pokemon, ReceivedMoveDetail } from '../models';
 import { useInfoBoxMessage } from '../hooks/useInfoBoxMessage';
 import { createBattleFlow } from '../models/battleFlow';
 import { useUsersIds } from '../hooks/useUsersIds';
+import { useGameLoop } from '../hooks/useGameLoop';
 
 type ArenaContextType = {
   arenaData: ArenaData;
@@ -61,43 +58,22 @@ export function ArenaProvider({ children }: { children: ReactNode }) {
         [userId]: updatePokemonHealth(
           arenaData.pokemons[userId],
           arenaData.pokemons[rivalId],
-          rivalMove
+          rivalMove,
+          arenaData,
+          userId
         ),
         [rivalId]: updatePokemonHealth(
           arenaData.pokemons[rivalId],
           arenaData.pokemons[userId],
-          move
+          move,
+          arenaData,
+          rivalId
         ),
       },
     };
 
     const battleFlow = createBattleFlow(userId, rivalId, updatedArenaData);
     gameLoop({ ...updatedArenaData, battleFlow });
-  };
-
-  const updatePokemonHealth = (
-    pokemon: ArenaPokemon,
-    attackerPokemon: ArenaPokemon,
-    move: MoveDetail
-  ): ArenaPokemon => {
-    const updatedPokemon = { ...pokemon };
-    const moveEffectiviness = getMoveEffectivinesInfo(
-      move.type.name,
-      arenaData.pokemons[rivalId].processedTypes[0]
-    ).value;
-
-    const remainingHP = getRemainingHP({
-      pokemonHP: updatedPokemon.currentHealth,
-      receivedAttackEffectivinessIndex: moveEffectiviness,
-      attackerBasePower: attackerPokemon.power,
-      attacksPower: move.power,
-    });
-
-    updatedPokemon.currentHealth = remainingHP;
-    updatedPokemon.currentPercentageHealth = getPercentageString(remainingHP, pokemon.hp);
-    updatedPokemon.isAlive = updatedPokemon.currentHealth > 0;
-    updatedPokemon.status = updatedPokemon.isAlive ? 'idle' : 'defeated';
-    return updatedPokemon;
   };
 
   useEffect(() => {
@@ -155,53 +131,14 @@ export function ArenaProvider({ children }: { children: ReactNode }) {
     });
   };
 
-  const gameLoop = async (data: ArenaData) => {
-    const { battleFlow } = data;
-    for (const {
-      action,
-      userId,
-      waitTime,
-      isGameOver,
-      moveName,
-      pokemonName,
-      effectivinessInfo,
-    } of battleFlow) {
-      switch (action) {
-        case 'attack':
-          attack(pokemonName, moveName, userId);
-          break;
-        case 'receiveDamage':
-          receiveDamage(userId);
-          break;
-        case 'updateHealthBar':
-          updateHealthBar(userId, data);
-          break;
-        default:
-          break;
-      }
-      if (isGameOver) {
-        gameOver();
-        break;
-      }
-      if (effectivinessInfo) {
-        await wait(waitTime);
-        setInfoBoxMessage({
-          type: effectivinessInfo.label,
-        });
-      }
-      if (effectivinessInfo && isSpecialEffect(effectivinessInfo)) {
-        await wait(waitTime);
-        setInfoBoxMessage({
-          type: effectivinessInfo.label,
-        });
-      }
-      await wait(waitTime);
-    }
-    setArenaData((prev) => ({
-      ...prev,
-      isTurnOver: true,
-    }));
-  };
+  const { gameLoop } = useGameLoop({
+    attack,
+    gameOver,
+    receiveDamage,
+    setInfoBoxMessage,
+    updateHealthBar,
+    updateArenaData: setArenaData,
+  });
 
   return (
     <ArenaContext.Provider
