@@ -19,7 +19,7 @@ export default function Page() {
     leaveArena,
     playAgain,
     onlineArenaData,
-    onlineId,
+    userId,
     rivalId,
     rivalLeftArena,
   } = useMultiplayerContext();
@@ -45,11 +45,11 @@ export default function Page() {
             <RivalPokemonInfo pokemon={onlineArenaData.pokemons[rivalId]} />
           </div>
           <div className="flex justify-around items-center w-full">
-            <PokemonInfo pokemon={onlineArenaData.pokemons[onlineId]} />
+            <PokemonInfo pokemon={onlineArenaData.pokemons[userId]} />
           </div>
           <InfoBox
             boxMessage={infoBoxMessage}
-            moves={onlineArenaData.pokemons[onlineId].arenaMoves}
+            moves={onlineArenaData.pokemons[userId].arenaMoves}
             isTurnOver={onlineArenaData.isTurnOver}
             onChoseMove={chooseMove}
           />

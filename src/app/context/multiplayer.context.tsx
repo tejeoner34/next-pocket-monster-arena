@@ -17,6 +17,8 @@ import { useInfoBoxMessage } from '../hooks/useInfoBoxMessage';
 import { updatePokemonHealth, updatePokemonStatus } from '../lib/online-arena.utils';
 import { routes } from '../routes';
 import { useRouter } from '@/i18n/routing';
+import { useUsersIds } from '../hooks/useUsersIds';
+import { useChallenge } from '../hooks/useChallenge';
 
 type SocketIoContextType = {
   acceptChallenge: () => void;
@@ -29,38 +31,36 @@ type SocketIoContextType = {
   infoBoxMessage: string;
   leaveArena: () => void;
   onlineArenaData: OnlineArenaDataType;
-  onlineId: string;
+  userId: string;
   receivedChallenge: ReceiveChallengeType;
   rivalId: ChallengerDataType['challengerId'];
   rivalLeftArena: boolean;
   updateOnlineArenaData: (updates: Partial<OnlineArenaDataType>) => void;
 };
 
-const defaultRequestStatus: ChallengeRequestStatus = {
-  status: REQUEST_STATUSES.NOT_SENT,
-  isSent: false,
-};
-
 export const MultiplayerContext = createContext<undefined | SocketIoContextType>(undefined);
 
 export const MultiplayerProvider = ({ children }: { children: ReactNode }) => {
-  const [onlineId, setOnlineId] = useState<string>('');
-  const [rivalId, setRivalId] = useState<ChallengerDataType['challengerId']>('');
-  const [rivalLeftArena, setRivalLeftArena] = useState(false);
-  const [receivedChallenge, setReceivedChallenge] = useState<ReceiveChallengeType>(
-    {} as ReceiveChallengeType
-  );
+  const { userId, rivalId, setUserId, setRivalId } = useUsersIds();
+  const {
+    challengeRequestStatus,
+    receivedChallenge,
+    rivalLeftArena,
+    setRivalLeftArena,
+    setChallengeRequestStatus,
+    setReceivedChallenge,
+    resetChallengeStatus,
+  } = useChallenge();
+  const { infoBoxMessage, setInfoBoxMessage } = useInfoBoxMessage();
   const [onlineArenaData, setOnlineArenaData] = useState<OnlineArenaDataType>(
     {} as OnlineArenaDataType
   );
-  const [challengeRequestStatus, setChallengeRequestStatus] =
-    useState<ChallengeRequestStatus>(defaultRequestStatus);
-  const { infoBoxMessage, setInfoBoxMessage } = useInfoBoxMessage();
+
   const router = useRouter();
 
   const resetArenaData = () => {
     setOnlineArenaData({} as OnlineArenaDataType);
-    setChallengeRequestStatus(defaultRequestStatus);
+    resetChallengeStatus();
     setReceivedChallenge({} as ReceiveChallengeType);
     resetChallengerData();
   };
@@ -88,17 +88,17 @@ export const MultiplayerProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const declineChallenge = () => {
-    emit(SOCKET_ACTIONS.challengeResponse, { userId: onlineId, accept: false, rivalId });
+    emit(SOCKET_ACTIONS.challengeResponse, { userId, accept: false, rivalId });
     resetChallengerData();
   };
 
   const acceptChallenge = () => {
     setChallengeRequestStatus({ status: REQUEST_STATUSES.ACCEPTED, isSent: true });
-    emit(SOCKET_ACTIONS.challengeResponse, { userId: onlineId, accept: true, rivalId });
+    emit(SOCKET_ACTIONS.challengeResponse, { userId, accept: true, rivalId });
   };
 
   const leaveArena = () => {
-    emit(SOCKET_ACTIONS.leavesRoom, { userId: onlineId, roomId: onlineArenaData.id });
+    emit(SOCKET_ACTIONS.leavesRoom, { userId, roomId: onlineArenaData.id });
     resetArenaData();
   };
 
@@ -118,7 +118,7 @@ export const MultiplayerProvider = ({ children }: { children: ReactNode }) => {
     }));
     setInfoBoxMessage({ type: 'waitingForRival' });
     emit(SOCKET_ACTIONS.chooseMove, {
-      userId: onlineId,
+      userId,
       chosenMove: move,
       roomId: onlineArenaData.id,
     });
@@ -195,10 +195,10 @@ export const MultiplayerProvider = ({ children }: { children: ReactNode }) => {
   };
 
   useEffect(() => {
-    if (socket.id) setOnlineId(socket.id);
+    if (socket.id) setUserId(socket.id);
 
     socket.on('connect', () => {
-      setOnlineId(socket.id || '');
+      setUserId(socket.id || '');
     });
 
     socket.on(SOCKET_RESPONSES.receiveChallenge, (data: ReceiveChallengeType) => {
@@ -260,7 +260,7 @@ export const MultiplayerProvider = ({ children }: { children: ReactNode }) => {
         infoBoxMessage,
         leaveArena,
         onlineArenaData,
-        onlineId,
+        userId,
         receivedChallenge,
         rivalId,
         rivalLeftArena,

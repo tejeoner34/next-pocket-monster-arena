@@ -17,7 +17,7 @@ export const requestStatusMessages: Record<RequestStatusType, string> = {
 
 export default function Page() {
   const t = useTranslations('findPlayer');
-  const { receivedChallenge, onlineId, declineChallenge, acceptChallenge, challengeRequestStatus } =
+  const { receivedChallenge, userId, declineChallenge, acceptChallenge, challengeRequestStatus } =
     useMultiplayerContext();
   const { isCopied, copyToClipboard } = useCopyClipboard();
   const showSpinner =
@@ -28,12 +28,12 @@ export default function Page() {
     <div className="w-full h-full flex flex-col items-center justify-center gap-5 text-center p-2.5">
       <h2 className="text-xs leading-5">
         {t('title')}
-        {onlineId}
+        {userId}
       </h2>
       <div>
         <button
           className="px-2 py-1 cursor-pointer text-black bg-white rounded-md"
-          onClick={() => copyToClipboard(onlineId)}
+          onClick={() => copyToClipboard(userId)}
         >
           {isCopied ? t('copied') : t('copy-id')}
         </button>

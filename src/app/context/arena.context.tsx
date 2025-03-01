@@ -15,6 +15,7 @@ import {
 import { ArenaData, ArenaPokemon, MoveDetail, Pokemon, ReceivedMoveDetail } from '../models';
 import { useInfoBoxMessage } from '../hooks/useInfoBoxMessage';
 import { createBattleFlow } from '../models/battleFlow';
+import { useUsersIds } from '../hooks/useUsersIds';
 
 type ArenaContextType = {
   arenaData: ArenaData;
@@ -28,8 +29,7 @@ type ArenaContextType = {
 export const ArenaContext = createContext<ArenaContextType | undefined>(undefined);
 
 export function ArenaProvider({ children }: { children: ReactNode }) {
-  const [userId, setUserId] = useState<string>('');
-  const [rivalId, setRivalId] = useState<string>('');
+  const { userId, rivalId, setUserId, setRivalId } = useUsersIds();
   const { data: pokemons, isLoading } = usePokemon();
   const [arenaData, setArenaData] = useState<ArenaData>({} as ArenaData);
   const { infoBoxMessage, setInfoBoxMessage } = useInfoBoxMessage();

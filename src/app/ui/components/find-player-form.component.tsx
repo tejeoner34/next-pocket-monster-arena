@@ -5,7 +5,7 @@ import { useState } from 'react';
 export default function FindPlayerForm() {
   const t = useTranslations('findPlayer');
   const [rivalId, setRivalId] = useState('');
-  const { onlineId, challengeUser } = useMultiplayerContext();
+  const { userId, challengeUser } = useMultiplayerContext();
 
   return (
     <form
@@ -13,7 +13,7 @@ export default function FindPlayerForm() {
       onSubmit={(e) => {
         e.preventDefault();
         if (!rivalId) return;
-        challengeUser({ challengerId: onlineId, rivalId });
+        challengeUser({ challengerId: userId, rivalId });
       }}
     >
       <input
