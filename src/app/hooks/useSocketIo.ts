@@ -97,6 +97,9 @@ export function useSocketIo({ setOnlineArenaData, gameLoop, setInfoBoxMessage }:
   };
 
   useEffect(() => {
+    if (!socket.connected) {
+      socket.connect();
+    }
     if (socket.id) setUserId(socket.id);
 
     socket.on('connect', () => {
@@ -147,6 +150,7 @@ export function useSocketIo({ setOnlineArenaData, gameLoop, setInfoBoxMessage }:
 
     return () => {
       socket.disconnect();
+      socket.off();
     };
   }, []);
 
