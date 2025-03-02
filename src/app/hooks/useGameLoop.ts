@@ -1,20 +1,14 @@
-import { isSpecialEffect, wait } from '../lib';
-import { ArenaData } from '../models';
+import { isSpecialEffect, modifyPokemonHealth, updatePokemonStatus, wait } from '../lib';
+import { ArenaData, ArenaPokemon, MoveDetail } from '../models';
 import { SetInfoBoxMessageType } from './useInfoBoxMessage';
 
 type UseGameLoopProps = {
-  attack: (pokemonName: string, moveName: string, userId: string) => void;
-  receiveDamage: (userId: string) => void;
-  updateHealthBar: (userId: string, data: ArenaData) => void;
   setInfoBoxMessage: (value: SetInfoBoxMessageType) => void;
   updateArenaData: React.Dispatch<React.SetStateAction<ArenaData>>;
   gameOver: () => void;
 };
 
 export function useGameLoop<T extends ArenaData>({
-  attack,
-  receiveDamage,
-  updateHealthBar,
   setInfoBoxMessage,
   updateArenaData,
   gameOver,
@@ -44,6 +38,7 @@ export function useGameLoop<T extends ArenaData>({
           break;
       }
       if (isGameOver) {
+        await defeatPokemon(userId);
         gameOver();
         break;
       }
@@ -62,6 +57,32 @@ export function useGameLoop<T extends ArenaData>({
     setInfoBoxMessage({
       type: 'default',
     });
+  };
+
+  const attack = (
+    pokemonName: ArenaPokemon['name'],
+    moveName: MoveDetail['name'],
+    attacker: string
+  ) => {
+    setInfoBoxMessage({
+      type: 'attack',
+      pokemonName,
+      moveName,
+    });
+    updateArenaData((prev) => updatePokemonStatus('attacking', attacker, prev));
+  };
+
+  const receiveDamage = (receiver: string) => {
+    updateArenaData((prev) => updatePokemonStatus('stunned', receiver, prev));
+  };
+
+  const updateHealthBar = async (userId: string, newData: ArenaData) => {
+    updateArenaData((prev) => modifyPokemonHealth(prev, newData, userId));
+  };
+
+  const defeatPokemon = async (userId: string) => {
+    updateArenaData((prev) => updatePokemonStatus('defeated', userId, prev));
+    await wait(1000);
   };
 
   return { gameLoop };

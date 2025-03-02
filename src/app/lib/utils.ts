@@ -6,3 +6,5 @@ export const getRandomElements = <T>(arr: T[], num: number) =>
 
 export const getPercentageString = (partialValue: number, totalValue: number): string =>
   `${Math.floor((partialValue / totalValue) * 100)}%`;
+
+export const createRandomId = () => Math.random().toString(36).substring(2, 15);

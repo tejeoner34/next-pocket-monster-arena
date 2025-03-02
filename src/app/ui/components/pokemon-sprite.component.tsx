@@ -10,7 +10,6 @@ export default function PokemonSprite({
 }) {
   const animationClasses: Record<ArenaPokemonStatus, string> = {
     attacking: 'animate-attack',
-    // 'rival-attacking': 'animate-rival-attack',
     defeated: 'animate-defeat',
     alive: '',
     waiting: '',

@@ -5,6 +5,7 @@ import {
   DamageInfo,
   MoveDetail,
   Pokemon,
+  ReceivedMoveDetail,
 } from '../models';
 import { getMoveEffectivinesInfo, getRemainingHP } from './pokemon-moves-types-relationship';
 import { getPercentageString } from './utils';
@@ -82,3 +83,12 @@ export const updatePokemonHealth = (
   updatedPokemon.status = updatedPokemon.isAlive ? 'idle' : 'defeated';
   return updatedPokemon;
 };
+
+export const initiatePokemonForArena = (pokemon: Pokemon): ArenaPokemon => ({
+  ...pokemon,
+  currentHealth: pokemon.hp,
+  currentPercentageHealth: '100%',
+  isAlive: true,
+  status: 'idle',
+  receivedAttackData: {} as ReceivedMoveDetail,
+});

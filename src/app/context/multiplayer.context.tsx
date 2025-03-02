@@ -2,14 +2,12 @@
 import { createContext, ReactNode, useState } from 'react';
 import {
   ArenaData,
-  ArenaPokemon,
   ChallengerDataType,
   ChallengeRequestStatus,
   MoveDetail,
   ReceiveChallengeType,
 } from '../models';
 import { useInfoBoxMessage } from '../hooks/useInfoBoxMessage';
-import { updatePokemonHealth, updatePokemonStatus } from '../lib/online-arena.utils';
 import { useSocketIo } from '../hooks/useSocketIo';
 import { useGameLoop } from '../hooks/useGameLoop';
 
@@ -36,35 +34,11 @@ export const MultiplayerProvider = ({ children }: { children: ReactNode }) => {
   const { infoBoxMessage, setInfoBoxMessage } = useInfoBoxMessage();
   const [onlineArenaData, setOnlineArenaData] = useState<ArenaData>({} as ArenaData);
 
-  const attack = (
-    pokemonName: ArenaPokemon['name'],
-    moveName: MoveDetail['name'],
-    attacker: string
-  ) => {
-    setInfoBoxMessage({
-      type: 'attack',
-      pokemonName,
-      moveName,
-    });
-    setOnlineArenaData((prev) => updatePokemonStatus('attacking', attacker, prev));
-  };
-
-  const receiveDamage = (receiver: string) => {
-    setOnlineArenaData((prev) => updatePokemonStatus('stunned', receiver, prev));
-  };
-
-  const updateHealthBar = (userId: string, newData: ArenaData) => {
-    setOnlineArenaData((prev) => updatePokemonHealth(prev, newData, userId));
-  };
-
   const handleGameOver = () => {
     gameOver();
   };
 
   const { gameLoop } = useGameLoop({
-    attack,
-    receiveDamage,
-    updateHealthBar,
     setInfoBoxMessage,
     updateArenaData: setOnlineArenaData,
     gameOver: handleGameOver,
