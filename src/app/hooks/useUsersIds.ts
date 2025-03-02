@@ -11,13 +11,14 @@ export function useUsersIds() {
 
   const createLocalRandomId = () => {
     const newId = createRandomId();
-    setUserId(newId);
     return newId;
   };
 
   const createLocalIds = () => {
     const newUserId = createLocalRandomId();
+    setUserId(newUserId);
     const newRivalId = createLocalRandomId();
+    setRivalId(newRivalId);
     return { newUserId, newRivalId };
   };
 
