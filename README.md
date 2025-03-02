@@ -10,7 +10,6 @@ The main goal was to recreate the same application I created a couple of years a
 
 - NextJS
 - TypeScript
-- React
 - SocketIO
 
 ## Preview
