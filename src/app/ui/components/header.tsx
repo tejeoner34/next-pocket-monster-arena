@@ -4,8 +4,8 @@ import React from 'react';
 
 export default function Header() {
   return (
-    <div className="p-10">
-      <Link href="/" className="flex justify-between items-center">
+    <div className="p-10 place-items-center">
+      <Link href="/" className="flex justify-between items-center max-w-2xl">
         <Image
           src="/img/pokeball.png"
           alt="Pokeball"
