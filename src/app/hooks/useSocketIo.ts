@@ -7,6 +7,7 @@ import {
   SOCKET_ACTIONS,
   MoveDetail,
   ArenaData,
+  ArenaDataServer,
 } from '../models';
 import { routes } from '../routes';
 
@@ -84,6 +85,7 @@ export function useSocketIo({ setOnlineArenaData, gameLoop, setInfoBoxMessage }:
   };
 
   const chooseMove = (move: MoveDetail) => {
+    console.log('chooseMove', { roomId });
     setOnlineArenaData((prev) => ({
       ...prev,
       isTurnOver: false,
@@ -111,10 +113,10 @@ export function useSocketIo({ setOnlineArenaData, gameLoop, setInfoBoxMessage }:
       setReceivedChallenge(data);
     });
 
-    socket.on(SOCKET_RESPONSES.challengeAccepted, (data: ArenaData, id: string) => {
+    socket.on(SOCKET_RESPONSES.challengeAccepted, (data: ArenaDataServer) => {
       router.push(routes.onlineArena);
       setOnlineArenaData(data);
-      roomId.current = id;
+      roomId.current = data.id;
       setInfoBoxMessage({
         type: 'default',
         pokemonName: data.pokemons[socket.id!].name,

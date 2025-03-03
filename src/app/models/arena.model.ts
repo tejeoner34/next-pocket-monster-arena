@@ -12,6 +12,10 @@ export interface ArenaData {
   isArenaReady: boolean;
 }
 
+export interface ArenaDataServer extends ArenaData {
+  id: string;
+}
+
 type UserId = string;
 
 export type MessageIntl = {
